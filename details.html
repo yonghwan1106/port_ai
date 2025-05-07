@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>세부내용 - PORT-AI 제안서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0056b3',
+                        secondary: '#00a0e9',
+                        accent: '#ff6b6b',
+                        darkblue: '#003366',
+                        lightblue: '#e6f7ff',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- 헤더 -->
+    <header class="bg-primary text-white py-6 shadow-md">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h1 class="text-2xl font-bold">부산항만공사</h1>
+                    <p class="text-sm opacity-90">2025년 항만혁신 국민제안 공모</p>
+                </div>
+                <nav>
+                    <ul class="flex space-x-6">
+                        <li><a href="index.html" class="hover:text-lightblue">개요</a></li>
+                        <li><a href="background.html" class="hover:text-lightblue">추진배경</a></li>
+                        <li><a href="details.html" class="hover:text-lightblue font-bold">세부내용</a></li>
+                        <li><a href="benefits.html" class="hover:text-lightblue">기대효과</a></li>
+                        <li><a href="demo.html" class="text-accent hover:underline">데모 화면</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 페이지 제목 -->
+    <section class="bg-darkblue text-white py-12 relative">
+        <div class="absolute inset-0 opacity-20 bg-cover bg-center z-0" style="background-image: url('./assets/images/digital-twin.jpg');"></div>
+        <div class="container mx-auto px-4 md:px-8 relative z-10">
+            <div class="max-w-3xl">
+                <h1 class="text-3xl md:text-4xl font-bold mb-4">세부내용</h1>
+                <p class="text-xl opacity-90">PORT-AI 통합 스마트 관제 시스템의 구성 요소와 구현 계획</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 페이지 내비게이션 -->
+    <section class="bg-white shadow-md sticky top-0 z-20">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="flex overflow-x-auto whitespace-nowrap py-3 scrollbar-hide">
+                <a href="#platform" class="px-4 py-2 mr-2 rounded-md hover:bg-gray-100 font-medium">통합 관제 플랫폼</a>
+                <a href="#vessel-management" class="px-4 py-2 mr-2 rounded-md hover:bg-gray-100 font-medium">선박 교통 관리</a>
+                <a href="#equipment-management" class="px-4 py-2 mr-2 rounded-md hover:bg-gray-100 font-medium">장비 운영 관리</a>
+                <a href="#logistics-optimization" class="px-4 py-2 mr-2 rounded-md hover:bg-gray-100 font-medium">물류 프로세스 최적화</a>
+                <a href="#decision-support" class="px-4 py-2 mr-2 rounded-md hover:bg-gray-100 font-medium">의사결정 지원 시스템</a>
+                <a href="#implementation" class="px-4 py-2 rounded-md hover:bg-gray-100 font-medium">실행 계획</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI 기반 통합 관제 플랫폼 구축 -->
+    <section id="platform" class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="max-w-5xl mx-auto">
+                <div id="digital-innovation" class="flex items-center mb-10">
+                    <div class="bg-secondary rounded-full p-3 mr-4 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-primary">1. AI 기반 통합 관제 플랫폼 구축</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-secondary">
+                        <h3 class="text-xl font-bold text-secondary mb-4">디지털 트윈 기술 적용</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>부산항 전체(북항, 신항, 진해신항)를 고정밀 3D 디지털 트윈으로 구현하여 실시간 상황 모니터링 및 시뮬레이션 환경 구축</li>
+                            <li>항만 내 모든 물리적 자산(선박, 장비, 시설, 차량 등)의 디지털 복제본 생성 및 실시간 상태 반영</li>
+                            <li>가상 환경에서 다양한 시나리오 시뮬레이션을 통한 의사결정 지원 및 최적화 방안 도출</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-secondary">
+                        <h3 class="text-xl font-bold text-secondary mb-4">데이터 통합 체계</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>분산된 데이터 소스(VTS, TOS, Port-MIS 등)를 클라우드 기반 데이터 레이크로 통합</li>
+                            <li>선박 AIS, 항만 IoT 센서, 장비 운영 데이터, 화물 추적 정보, 기상 데이터 등 실시간 수집</li>
+                            <li>표준화된 데이터 모델 및 API 구축으로 시스템 간 원활한 데이터 교환 지원</li>
+                            <li>데이터 품질 관리 및 거버넌스 체계 구축으로 신뢰성 있는 분석 기반 마련</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-lightblue p-8 rounded-lg shadow-md mb-12">
+                    <h3 class="text-2xl font-bold text-darkblue mb-6">다층적 AI 분석 엔진</h3>
+                    
+                    <div class="mb-8">
+                        <h4 class="text-xl font-semibold text-primary mb-3">실시간 분석층</h4>
+                        <p class="mb-3 text-gray-700">현재 상황의 실시간 모니터링 및 이상 징후 감지</p>
+                        <ul class="list-disc pl-8 space-y-2 text-gray-700">
+                            <li>영상 분석 AI를 통한 항만 내 선박, 차량, 장비, 화물 상태 실시간 인식</li>
+                            <li>이상 징후 감지 알고리즘으로 안전 위험, 병목 현상, 장비 이상 등 조기 발견</li>
+                            <li>즉각적 대응이 필요한 상황에 대한 자동 알림 및 대응 방안 제시</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h4 class="text-xl font-semibold text-primary mb-3">예측 분석층</h4>
+                        <p class="mb-3 text-gray-700">미래 상황 예측 및 선제적 대응 전략 수립</p>
+                        <ul class="list-disc pl-8 space-y-2 text-gray-700">
+                            <li>기계학습 기반 선박 도착 시간, 작업 소요 시간, 장비 고장 가능성 등 예측</li>
+                            <li>기상 조건, 물동량 변화, 교통 상황 등을 고려한 항만 혼잡도 예측</li>
+                            <li>예측된 상황에 대한 사전 대응 방안 수립 및 자원 배치 최적화</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-xl font-semibold text-primary mb-3">최적화 분석층</h4>
+                        <p class="mb-3 text-gray-700">자원 배치 및 운영 프로세스 최적화</p>
+                        <ul class="list-disc pl-8 space-y-2 text-gray-700">
+                            <li>강화학습 기반 선석 배정, 장비 배치, 작업 스케줄링 최적화</li>
+                            <li>다목적 최적화 알고리즘을 통한 비용, 시간, 에너지 소비, 환경 영향 등 종합 고려</li>
+                            <li>시뮬레이션 기반 최적화로 다양한 제약조건 하에서의 최적 운영 방안 도출</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 지능형 선박 교통 관리 시스템 -->
+    <section id="vessel-management" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="max-w-5xl mx-auto">
+                <div id="safety-innovation" class="flex items-center mb-10">
+                    <div class="bg-secondary rounded-full p-3 mr-4 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-primary">2. 지능형 선박 교통 관리 시스템</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-secondary mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-darkblue mb-4">AI 기반 최적 입출항 계획</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>선박 특성, 화물 정보, 기상 조건, 항만 혼잡도 등을 종합 분석하는 AI 알고리즘 개발</li>
+                            <li>선박별 최적 도착/출발 시간 산정 및 적시 조정으로 대기시간 최소화</li>
+                            <li>선사와 터미널 간 실시간 정보 공유 체계 구축으로 협력적 계획 수립 지원</li>
+                            <li>빅데이터 분석을 통한 선박 지연 요인 식별 및 사전 예방 조치 마련</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-secondary mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-darkblue mb-4">선석 배정 최적화</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>머신러닝 기반 최적 선석 배정 시스템 구축</li>
+                            <li>선박 크기, 하역 작업 특성, 예상 작업 시간, 연계 작업 등을 고려한 종합 의사결정</li>
+                            <li>실시간 상황 변화에 따른 동적 선석 계획 조정으로 유연한 대응</li>
+                            <li>터미널 간 협력적 선석 배정으로 항만 전체 자원 활용 최적화</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-secondary mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-darkblue mb-4">동적 교통 제어</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>항만 내 선박 이동 실시간 모니터링 및 AI 기반 충돌 위험 예측</li>
+                            <li>비정상 항행 패턴 감지 및 자동 경보 시스템</li>
+                            <li>혼잡 상황에서의 최적 항로 추천 및 속도 조정 안내</li>
+                            <li>기상 조건, 조류, 시야 등을 고려한 안전 항행 지원 시스템</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 지능형 장비 운영 및 관리 시스템 -->
+    <section id="equipment-management" class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex items-center mb-10">
+                    <div class="bg-secondary rounded-full p-3 mr-4 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-primary">3. 지능형 장비 운영 및 관리 시스템</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-secondary mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-darkblue mb-4">장비 운영 최적화</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>AI 기반 장비(크레인, 이송장비 등) 작업 할당 및 운영 최적화</li>
+                            <li>실시간 작업 우선순위, 장비 위치, 화물 상태를 고려한 동적 작업 계획 수립</li>
+                            <li>에너지 효율성과 작업 생산성을 동시에 고려한 최적 운행 패턴 도출</li>
+                            <li>자율주행 장비와 유인 장비의 협업 체계 구축 및 안전한 작업 환경 조성</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-secondary mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-darkblue mb-4">예측 유지보수 시스템</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>IoT 센서 기반 장비 상태 실시간 모니터링</li>
+                            <li>머신러닝 알고리즘을 활용한 장비 고장 예측 및 잔여 수명 평가</li>
+                            <li>최적 유지보수 일정 및 방법 추천으로 장비 가동률 극대화</li>
+                            <li>부품 재고 관리와 연계한 통합 유지보수 체계 구축</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-secondary mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-darkblue mb-4">자율 장비 통합 관제</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>다양한 자율주행 이송장비, 자동화 크레인 등의 통합 관제 시스템</li>
+                            <li>복수 장비 간 협업 및 충돌 방지를 위한 조정 알고리즘</li>
+                            <li>작업 상황에 따른 자율 작업 계획 수립 및 실행</li>
+                            <li>비상 상황 감지 및 원격 개입 체계 구축으로 안전성 확보</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 물류 프로세스 최적화 시스템 -->
+    <section id="logistics-optimization" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="max-w-5xl mx-auto">
+                <div id="social-innovation" class="flex items-center mb-10">
+                    <div class="bg-secondary rounded-full p-3 mr-4 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-primary">4. 물류 프로세스 최적화 시스템</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-secondary mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-darkblue mb-4">실시간 화물 추적</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>RFID, GPS, IoT 기술을 활용한 화물 위치 실시간 추적 시스템</li>
+                            <li>컨테이너 상태(온도, 충격, 개폐 등) 모니터링으로 화물 안전성 확보</li>
+                            <li>블록체인 기술 적용으로 화물 이력 관리 및 데이터 신뢰성 강화</li>
+                            <li>화주, 포워더, 운송사 등에 실시간 화물 정보 제공으로 가시성 향상</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-secondary mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-darkblue mb-4">수출입 프로세스 최적화</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>AI 기반 병목 현상 분석 및 프로세스 최적화</li>
+                            <li>통관, 검역, 하역 등 각 단계의 소요 시간 예측 및 선제적 조정</li>
+                            <li>문서 처리 자동화 및 디지털화로 행정 프로세스 가속화</li>
+                            <li>다양한 이해관계자 간 정보 공유 플랫폼 구축으로 협업 효율성 향상</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-secondary mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-darkblue mb-4">연계 교통망 통합 관리</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>항만과 배후 교통망(도로, 철도) 연계 정보 통합 분석</li>
+                            <li>실시간 교통 상황, 차량/열차 위치 정보 기반 최적 경로 추천</li>
+                            <li>항만 게이트 혼잡 예측 및 사전 대응 시스템 구축</li>
+                            <li>멀티모달 운송 최적화로 화물 이동 전 과정의 효율성 제고</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 통합 의사결정 지원 시스템 -->
+    <section id="decision-support" class="py-16 bg-white">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex items-center mb-10">
+                    <div class="bg-secondary rounded-full p-3 mr-4 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-primary">5. 통합 의사결정 지원 시스템</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-secondary mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-darkblue mb-4">실시간 대시보드</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>항만 운영 전반을 한눈에 파악할 수 있는 직관적 시각화 인터페이스</li>
+                            <li>사용자 역할별 맞춤형 정보 제공 및 대시보드 구성</li>
+                            <li>주요 KPI 실시간 모니터링 및 목표 대비 성과 추적</li>
+                            <li>의사결정자의 니즈에 맞는 다양한 분석 도구 및 보고서 제공</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-secondary mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-darkblue mb-4">이상 감지 및 경보 시스템</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>머신러닝 기반 이상 패턴 감지 알고리즘 적용</li>
+                            <li>다양한 데이터 소스의 상관관계 분석을 통한 잠재적 문제 조기 발견</li>
+                            <li>위험 등급에 따른 차별화된 경보 및 대응 체계 구축</li>
+                            <li>지속적인 학습을 통한 감지 정확도 향상 및 오경보 최소화</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-secondary mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-darkblue mb-4">시나리오 시뮬레이션</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>가상 환경에서 다양한 상황 시뮬레이션 및 결과 예측</li>
+                            <li>기상 악화, 교통 혼잡, 장비 고장 등 다양한 위기 상황에 대한 대응 전략 수립</li>
+                            <li>정책 및 운영 변화에 따른 영향 평가와 최적 방안 도출</li>
+                            <li>과거 데이터와 AI 예측 모델을 활용한 정확한 시뮬레이션 결과 제공</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 실행 방법 및 계획 -->
+    <section id="implementation" class="py-16 bg-lightblue">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl font-bold mb-12 text-primary text-center">실행 방법 및 계획</h2>
+                
+                <div class="relative">
+                    <!-- 타임라인 선 -->
+                    <div class="absolute h-full w-0.5 bg-primary left-1/2 transform -translate-x-1/2"></div>
+                    
+                    <!-- 1단계: 기반 구축 -->
+                    <div class="relative z-10 mb-12">
+                        <div class="flex items-center justify-center mb-4">
+                            <div class="bg-primary rounded-full w-12 h-12 flex items-center justify-center text-white font-bold text-xl">1</div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-2xl font-bold text-center text-darkblue mb-6">1단계: 기반 구축 (1년)</h3>
+                            <ul class="list-disc pl-8 space-y-3 text-gray-700">
+                                <li>기존 시스템 분석 및 통합 아키텍처 설계</li>
+                                <li>데이터 표준화 및 통합 플랫폼 구축</li>
+                                <li>핵심 데이터 수집 인프라 구축 및 시범 운영</li>
+                                <li>이해관계자 요구사항 분석 및 세부 계획 수립</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- 2단계: 핵심 시스템 개발 -->
+                    <div class="relative z-10 mb-12">
+                        <div class="flex items-center justify-center mb-4">
+                            <div class="bg-primary rounded-full w-12 h-12 flex items-center justify-center text-white font-bold text-xl">2</div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-2xl font-bold text-center text-darkblue mb-6">2단계: 핵심 시스템 개발 (1년)</h3>
+                            <ul class="list-disc pl-8 space-y-3 text-gray-700">
+                                <li>디지털 트윈 기반 통합 관제 플랫폼 개발</li>
+                                <li>AI 분석 엔진 개발 및 기초 모델 학습</li>
+                                <li>선박 교통 관리 및 장비 운영 관리 모듈 개발</li>
+                                <li>데이터 품질 관리 및 피드백 체계 구축</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- 3단계: 확장 및 고도화 -->
+                    <div class="relative z-10 mb-12">
+                        <div class="flex items-center justify-center mb-4">
+                            <div class="bg-primary rounded-full w-12 h-12 flex items-center justify-center text-white font-bold text-xl">3</div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-2xl font-bold text-center text-darkblue mb-6">3단계: 확장 및 고도화 (1년)</h3>
+                            <ul class="list-disc pl-8 space-y-3 text-gray-700">
+                                <li>물류 프로세스 최적화 시스템 통합</li>
+                                <li>다양한 이해관계자 시스템 연계 확대</li>
+                                <li>AI 모델 고도화 및 정확도 향상</li>
+                                <li>단계적 자율 운영 기능 적용 및 테스트</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- 4단계: 완전 통합 및 지능화 -->
+                    <div class="relative z-10">
+                        <div class="flex items-center justify-center mb-4">
+                            <div class="bg-primary rounded-full w-12 h-12 flex items-center justify-center text-white font-bold text-xl">4</div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-2xl font-bold text-center text-darkblue mb-6">4단계: 완전 통합 및 지능화 (1년)</h3>
+                            <ul class="list-disc pl-8 space-y-3 text-gray-700">
+                                <li>전체 시스템 통합 및 안정화</li>
+                                <li>지능형 자율 의사결정 기능 고도화</li>
+                                <li>지속적 학습 및 최적화 체계 구축</li>
+                                <li>사용자 피드백 기반 개선 및 신규 기능 개발</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-16 text-center">
+                    <h3 class="text-2xl font-bold text-darkblue mb-6">차별화 전략</h3>
+                    <div class="bg-white rounded-lg shadow-md p-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="text-xl font-bold text-primary mb-4">통합적 접근방식</h4>
+                                <p class="text-gray-700 mb-2">기존의 개별 시스템 중심 접근이 아닌, 항만 전체를 하나의 유기체로 보는 통합적 접근을 통해 시너지를 창출합니다.</p>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-xl font-bold text-primary mb-4">AI 기반 예측 및 최적화</h4>
+                                <p class="text-gray-700 mb-2">단순 데이터 수집·표시 수준을 넘어 AI 기반 예측 분석 및 최적화를 제공하여 선제적 대응이 가능한 지능형 의사결정 지원 체계를 구축합니다.</p>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-xl font-bold text-primary mb-4">확장성과 유연성</h4>
+                                <p class="text-gray-700 mb-2">클라우드 기반 마이크로서비스 아키텍처로 설계하여 새로운 기술과 서비스의 지속적 통합이 가능하고, 모듈식 설계로 단계적 구현 및 확장이 가능한 유연한 시스템 구조를 제공합니다.</p>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-xl font-bold text-primary mb-4">사용자 중심 설계</h4>
+                                <p class="text-gray-700 mb-2">항만 운영자, 선사, 터미널 운영사 등 다양한 이해관계자의 관점을 통합한 UX/UI 설계와 역할별 맞춤형 인터페이스를 제공하여 사용자 편의성을 극대화합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 페이지 내비게이션 -->
+    <section class="py-10 bg-gray-50">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="max-w-5xl mx-auto">
+                <h3 class="text-xl font-bold text-darkblue mb-6">다음 섹션으로 이동</h3>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <a href="benefits.html" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all flex-1">
+                        <div class="flex items-center">
+                            <div class="bg-primary rounded-full w-10 h-10 flex items-center justify-center text-white mr-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">다음 섹션</p>
+                                <h4 class="text-lg font-bold text-darkblue">기대효과</h4>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="background.html" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all flex-1">
+                        <div class="flex items-center">
+                            <div class="bg-secondary rounded-full w-10 h-10 flex items-center justify-center text-white mr-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">이전 섹션</p>
+                                <h4 class="text-lg font-bold text-darkblue">추진배경</h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="bg-darkblue text-white py-10">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-6 md:mb-0">
+                        <h2 class="text-xl font-bold">PORT-AI 제안서</h2>
+                        <p class="text-sm opacity-75 mt-1">2025년 항만혁신 국민제안 공모</p>
+                    </div>
+                    <div class="text-sm opacity-75 text-center md:text-right">
+                        <p>제안자: 박용환</p>
+                        <p>제출일: 2025년 5월 7일</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./assets/js/main.js"></script>
+</body>
+</html>

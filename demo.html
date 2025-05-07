@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PORT-AI 데모 화면 - 부산항 통합 스마트 관제 시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        .demo-container {
+            background-color: #1a1f36;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .demo-header {
+            background-color: #11152c;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .demo-body {
+            padding: 1.5rem;
+        }
+        
+        .demo-label {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 0.25rem;
+        }
+        
+        .demo-value {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .demo-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .demo-card:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .demo-btn {
+            background-color: rgba(59, 130, 246, 0.8);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .demo-btn:hover {
+            background-color: rgb(59, 130, 246);
+        }
+        
+        .demo-status-ok {
+            color: #10b981;
+        }
+        
+        .demo-status-warning {
+            color: #f59e0b;
+        }
+        
+        .demo-status-alert {
+            color: #ef4444;
+        }
+        
+        .blinking {
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .grid-item {
+            transition: all 0.3s ease;
+        }
+        
+        .grid-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+            z-index: 10;
+        }
+        
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: currentColor;
+            display: inline-block;
+        }
+        
+        .animated-bg {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(59, 130, 246, 0),
+                rgba(59, 130, 246, 0.3),
+                rgba(59, 130, 246, 0)
+            );
+            animation: rotate 10s linear infinite;
+            z-index: 0;
+        }
+        
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .ship {
+            width: 10px;
+            height: 10px;
+            background-color: rgba(59, 130, 246, 0.8);
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
+        }
+        
+        .ship-route {
+            stroke-dasharray: 5;
+            animation: dashmove 30s linear infinite;
+        }
+        
+        @keyframes dashmove {
+            to {
+                stroke-dashoffset: -200;
+            }
+        }
+        
+        .ping {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.3);
+            position: absolute;
+            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        
+        @keyframes ping {
+            75%, 100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+        
+        .card-hover:hover .card-icon {
+            transform: scale(1.1);
+        }
+        
+        .card-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s;
+            transform-origin: center;
+        }
+        
+        .notification-pill {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #ef4444;
+            color: white;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-8 flex items-center justify-center">
+                <a href="index.html" class="flex items-center text-blue-600 hover:text-blue-800 transition">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    <span>메인 페이지로 돌아가기</span>
+                </a>
+            </div>
+            <h1 class="text-3xl font-bold mb-2 text-center">PORT-AI 데모 화면</h1>
+            <p class="text-center text-gray-600 mb-12">부산항 통합 스마트 관제 시스템 인터페이스 예시</p>
+            
+            <!-- Demo Tabs -->
+            <div class="mb-6 flex justify-center">
+                <div class="inline-flex rounded-md shadow-sm" role="group">
+                    <a href="#main-dashboard" class="bg-blue-600 text-white px-4 py-2 text-sm font-medium rounded-l-lg hover:bg-blue-700">
+                        메인 대시보드
+                    </a>
+                    <a href="#vessel-monitoring" class="bg-gray-200 text-gray-800 px-4 py-2 text-sm font-medium hover:bg-gray-300">
+                        선박 모니터링
+                    </a>
+                    <a href="#equipment-management" class="bg-gray-200 text-gray-800 px-4 py-2 text-sm font-medium hover:bg-gray-300">
+                        장비 관리
+                    </a>
+                    <a href="#cargo-tracking" class="bg-gray-200 text-gray-800 px-4 py-2 text-sm font-medium hover:bg-gray-300">
+                        화물 추적
+                    </a>
+                    <a href="#demo-readme" class="bg-gray-200 text-gray-800 px-4 py-2 text-sm font-medium rounded-r-lg hover:bg-gray-300">
+                        데모 가이드
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Main Dashboard Demo -->
+            <div id="main-dashboard" class="demo-container mb-12">
+                <div class="demo-header flex justify-between items-center">
+                    <div class="flex items-center">
+                        <i class="fas fa-ship text-blue-500 mr-2"></i>
+                        <h2 class="text-white font-bold">PORT-AI 통합 대시보드</h2>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <i class="fas fa-bell text-gray-400 hover:text-white cursor-pointer"></i>
+                            <span class="notification-pill">3</span>
+                        </div>
+                        <div class="flex items-center text-gray-400">
+                            <i class="fas fa-user-circle text-xl mr-2"></i>
+                            <span class="text-sm">관리자</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-body">
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="demo-card grid-item">
+                            <div class="demo-label">현재 입항 선박</div>
+                            <div class="flex justify-between items-center">
+                                <div class="demo-value">18</div>
+                                <i class="fas fa-ship text-blue-400"></i>
+                            </div>
+                            <div class="text-green-400 text-xs mt-2">
+                                <i class="fas fa-arrow-up"></i> 전일 대비 +3
+                            </div>
+                        </div>
+                        <div class="demo-card grid-item">
+                            <div class="demo-label">대기 중인 선박</div>
+                            <div class="flex justify-between items-center">
+                                <div class="demo-value">7</div>
+                                <i class="fas fa-anchor text-yellow-400"></i>
+                            </div>
+                            <div class="text-red-400 text-xs mt-2">
+                                <i class="fas fa-arrow-up"></i> 평균 대비 +2
+                            </div>
+                        </div>
+                        <div class="demo-card grid-item">
+                            <div class="demo-label">금일 처리 컨테이너</div>
+                            <div class="flex justify-between items-center">
+                                <div class="demo-value">14,382 TEU</div>
+                                <i class="fas fa-boxes text-purple-400"></i>
+                            </div>
+                            <div class="text-green-400 text-xs mt-2">
+                                <i class="fas fa-chart-line"></i> 목표 달성률 92%
+                            </div>
+                        </div>
+                        <div class="demo-card grid-item">
+                            <div class="demo-label">시스템 상태</div>
+                            <div class="flex justify-between items-center">
+                                <div class="demo-value">정상</div>
+                                <i class="fas fa-check-circle text-green-500"></i>
+                            </div>
+                            <div class="text-blue-400 text-xs mt-2">
+                                <i class="fas fa-history"></i> 마지막 점검: 오늘 08:45
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <!-- Port Map Visualization -->
+                        <div class="demo-card col-span-2 grid-item relative animated-bg" style="height: 280px;">
+                            <div class="mb-2 flex justify-between items-center">
+                                <div class="font-semibold text-white">부산항 실시간 모니터링</div>
+                                <div class="text-xs text-gray-400">마지막 업데이트: 1분 전</div>
+                            </div>
+                            
+                            <!-- Harbor/Port Map Mockup -->
+                            <div class="relative h-full" style="z-index: 1;">
+                                <!-- Base map -->
+                                <svg width="100%" height="100%" viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Water Background -->
+                                    <rect x="0" y="0" width="600" height="250" fill="#1e3a5f" />
+                                    
+                                    <!-- Harbor Shape -->
+                                    <path d="M150,50 L450,50 L500,100 L500,200 L300,230 L100,200 L100,100 Z" fill="#263c59" stroke="#5eaef4" stroke-width="1" />
+                                    
+                                    <!-- Berths -->
+                                    <rect x="150" y="55" width="50" height="10" fill="#3b5e8f" stroke="#5eaef4" stroke-width="1" />
+                                    <rect x="220" y="55" width="50" height="10" fill="#3b5e8f" stroke="#5eaef4" stroke-width="1" />
+                                    <rect x="290" y="55" width="50" height="10" fill="#3b5e8f" stroke="#5eaef4" stroke-width="1" />
+                                    <rect x="360" y="55" width="50" height="10" fill="#3b5e8f" stroke="#5eaef4" stroke-width="1" />
+                                    
+                                    <!-- Container Areas -->
+                                    <rect x="150" y="80" width="60" height="40" fill="#2c4a6d" stroke="#5eaef4" stroke-width="0.5" />
+                                    <rect x="230" y="80" width="60" height="40" fill="#2c4a6d" stroke="#5eaef4" stroke-width="0.5" />
+                                    <rect x="310" y="80" width="60" height="40" fill="#2c4a6d" stroke="#5eaef4" stroke-width="0.5" />
+                                    <rect x="390" y="80" width="60" height="40" fill="#2c4a6d" stroke="#5eaef4" stroke-width="0.5" />
+                                    
+                                    <rect x="150" y="130" width="60" height="40" fill="#2c4a6d" stroke="#5eaef4" stroke-width="0.5" />
+                                    <rect x="230" y="130" width="60" height="40" fill="#2c4a6d" stroke="#5eaef4" stroke-width="0.5" />
+                                    <rect x="310" y="130" width="60" height="40" fill="#2c4a6d" stroke="#5eaef4" stroke-width="0.5" />
+                                    <rect x="390" y="130" width="60" height="40" fill="#2c4a6d" stroke="#5eaef4" stroke-width="0.5" />
+                                    
+                                    <!-- Roads -->
+                                    <line x1="180" y1="180" x2="420" y2="180" stroke="#4a576a" stroke-width="5" />
+                                    <line x1="180" y1="200" x2="420" y2="200" stroke="#4a576a" stroke-width="3" />
+                                    
+                                    <!-- Ship Routes -->
+                                    <path d="M50,180 C100,170 120,150 170,140" stroke="#5eaef4" stroke-width="1" stroke-dasharray="5" class="ship-route" fill="none" />
+                                    <path d="M550,160 C500,150 480,130 430,130" stroke="#5eaef4" stroke-width="1" stroke-dasharray="5" class="ship-route" fill="none" />
+                                    <path d="M300,20 C300,30 300,40 300,50" stroke="#5eaef4" stroke-width="1" stroke-dasharray="5" class="ship-route" fill="none" />
+                                    
+                                    <!-- Alert Area -->
+                                    <circle cx="230" cy="100" r="8" fill="none" stroke="#ef4444" stroke-width="1" class="blinking" />
+                                </svg>
+                                
+                                <!-- Ships (Dots) -->
+                                <div class="ship" style="top: 180px; left: 50px;"></div>
+                                <div class="ship" style="top: 160px; left: 550px;"></div>
+                                <div class="ship" style="top: 40px; left: 300px;"></div>
+                                <div class="ship" style="top: 55px; left: 175px;"></div>
+                                <div class="ship" style="top: 55px; left: 385px;"></div>
+                                
+                                <!-- Alert Ping -->
+                                <div class="ping" style="top: 100px; left: 230px;"></div>
+                            </div>
+                            
+                            <!-- Map Controls -->
+                            <div class="absolute top-2 right-2 flex space-x-1">
+                                <button class="bg-gray-800 bg-opacity-50 text-white p-1 rounded hover:bg-opacity-80">
+                                    <i class="fas fa-plus text-xs"></i>
+                                </button>
+                                <button class="bg-gray-800 bg-opacity-50 text-white p-1 rounded hover:bg-opacity-80">
+                                    <i class="fas fa-minus text-xs"></i>
+                                </button>
+                                <button class="bg-gray-800 bg-opacity-50 text-white p-1 rounded hover:bg-opacity-80">
+                                    <i class="fas fa-expand text-xs"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Legend -->
+                            <div class="absolute bottom-2 left-2 bg-gray-900 bg-opacity-70 p-1 rounded text-xs text-white">
+                                <div class="flex items-center space-x-2">
+                                    <div class="flex items-center">
+                                        <div class="dot bg-blue-400 mr-1"></div>
+                                        <span>선박</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="dot bg-red-500 mr-1"></div>
+                                        <span>알림</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="dot bg-green-400 mr-1"></div>
+                                        <span>크레인</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Alerts and Notifications -->
+                        <div class="demo-card grid-item">
+                            <div class="mb-3 flex justify-between items-center">
+                                <div class="font-semibold text-white">실시간 알림</div>
+                                <button class="text-xs text-blue-400 hover:text-blue-300">모두 보기</button>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="p-2 bg-red-900 bg-opacity-30 rounded border border-red-800 flex items-start">
+                                    <i class="fas fa-exclamation-circle text-red-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <div class="text-sm text-white font-medium">컨테이너 구역 충돌 위험</div>
+                                        <div class="text-xs text-gray-400">2분 전 - B3 구역</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-2 bg-yellow-900 bg-opacity-20 rounded border border-yellow-800 flex items-start">
+                                    <i class="fas fa-exclamation-triangle text-yellow-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <div class="text-sm text-white font-medium">크레인 #3 유지보수 필요</div>
+                                        <div class="text-xs text-gray-400">15분 전 - 터미널 1</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-2 bg-blue-900 bg-opacity-20 rounded border border-blue-800 flex items-start">
+                                    <i class="fas fa-info-circle text-blue-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <div class="text-sm text-white font-medium">컨테이너선 'COSCO HOPE' 입항</div>
+                                        <div class="text-xs text-gray-400">35분 전 - 항로 3</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-2 bg-green-900 bg-opacity-20 rounded border border-green-800 flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <div class="text-sm text-white font-medium">일일 목표 75% 달성</div>
+                                        <div class="text-xs text-gray-400">1시간 전 - 시스템</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="demo-btn w-full mt-3 flex items-center justify-center">
+                                <i class="fas fa-plus-circle mr-1"></i> 새 알림 생성
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Weather & Environmental Info -->
+                        <div class="demo-card grid-item">
+                            <div class="mb-3 flex justify-between items-center">
+                                <div class="font-semibold text-white">환경 정보</div>
+                                <div class="text-xs text-gray-400">부산항 북항 기준</div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 mb-2">
+                                <div class="bg-gray-800 bg-opacity-30 p-2 rounded border border-gray-700">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <div class="text-xs text-gray-400">풍속</div>
+                                        <i class="fas fa-wind text-blue-400"></i>
+                                    </div>
+                                    <div class="text-lg text-white">4.2 m/s</div>
+                                    <div class="text-xs text-green-400">안전 범위</div>
+                                </div>
+                                
+                                <div class="bg-gray-800 bg-opacity-30 p-2 rounded border border-gray-700">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <div class="text-xs text-gray-400">파고</div>
+                                        <i class="fas fa-water text-blue-400"></i>
+                                    </div>
+                                    <div class="text-lg text-white">0.8 m</div>
+                                    <div class="text-xs text-green-400">안전 범위</div>
+                                </div>
+                                
+                                <div class="bg-gray-800 bg-opacity-30 p-2 rounded border border-gray-700">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <div class="text-xs text-gray-400">조류</div>
+                                        <i class="fas fa-exchange-alt text-blue-400"></i>
+                                    </div>
+                                    <div class="text-lg text-white">1.2 kt</div>
+                                    <div class="text-xs text-green-400">북향</div>
+                                </div>
+                                
+                                <div class="bg-gray-800 bg-opacity-30 p-2 rounded border border-gray-700">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <div class="text-xs text-gray-400">가시성</div>
+                                        <i class="fas fa-eye text-blue-400"></i>
+                                    </div>
+                                    <div class="text-lg text-white">14.3 km</div>
+                                    <div class="text-xs text-green-400">양호</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="text-xs text-gray-400">기상 예보</div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-cloud-sun text-yellow-300 mr-2"></i>
+                                        <span class="text-white">대체로 맑음</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="text-xs text-gray-400">다음 24시간</div>
+                                    <div class="text-xs text-green-400">작업 적합</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Efficiency Metrics -->
+                        <div class="demo-card grid-item">
+                            <div class="mb-3 flex justify-between items-center">
+                                <div class="font-semibold text-white">실시간 성능 지표</div>
+                                <button class="text-xs text-blue-400 hover:text-blue-300">상세 분석</button>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="text-sm text-white">크레인 효율성</div>
+                                        <div class="text-sm text-green-400">85%</div>
+                                    </div>
+                                    <div class="bg-gray-700 h-2 rounded overflow-hidden">
+                                        <div class="bg-green-500 h-full" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="text-sm text-white">장비 가동률</div>
+                                        <div class="text-sm text-blue-400">92%</div>
+                                    </div>
+                                    <div class="bg-gray-700 h-2 rounded overflow-hidden">
+                                        <div class="bg-blue-500 h-full" style="width: 92%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="text-sm text-white">선석 점유율</div>
+                                        <div class="text-sm text-yellow-400">74%</div>
+                                    </div>
+                                    <div class="bg-gray-700 h-2 rounded overflow-hidden">
+                                        <div class="bg-yellow-500 h-full" style="width: 74%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="text-sm text-white">화물 처리 속도</div>
+                                        <div class="text-sm text-purple-400">88%</div>
+                                    </div>
+                                    <div class="bg-gray-700 h-2 rounded overflow-hidden">
+                                        <div class="bg-purple-500 h-full" style="width: 88%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3 p-2 bg-blue-900 bg-opacity-20 rounded text-sm text-white">
+                                <div class="font-medium mb-1 flex items-center">
+                                    <i class="fas fa-robot text-blue-400 mr-1"></i> AI 최적화 제안
+                                </div>
+                                <p class="text-xs text-gray-300">오후 2-4시 사이 크레인 2대를 북항 C 구역으로 재배치하여 효율성 7% 향상 가능</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Vessel Traffic Management Demo -->
+            <h2 id="vessel-monitoring" class="text-2xl font-bold mb-6">선박 트래픽 관리 시스템</h2>
+            <div class="grid grid-cols-3 gap-6 mb-12">
+                <div class="demo-container col-span-2">
+                    <div class="demo-header flex justify-between items-center">
+                        <div class="flex items-center">
+                            <i class="fas fa-water text-blue-500 mr-2"></i>
+                            <h2 class="text-white font-bold">선박 트래픽 모니터링</h2>
+                        </div>
+                        <div class="flex space-x-3 text-xs">
+                            <button class="bg-blue-600 text-white py-1 px-3 rounded">실시간</button>
+                            <button class="bg-gray-700 text-gray-300 py-1 px-3 rounded">기록</button>
+                            <button class="bg-gray-700 text-gray-300 py-1 px-3 rounded">예측</button>
+                        </div>
+                    </div>
+                    <div class="demo-body p-0">
+                        <!-- Vessel Traffic Map -->
+                        <div class="relative h-80">
+                            <!-- Harbor Map Background -->
+                            <div class="absolute inset-0 bg-[#1a2c42] overflow-hidden">
+                                <!-- Land mass -->
+                                <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" class="w-full h-full absolute inset-0">
+                                    <!-- Water -->
+                                    <rect x="0" y="0" width="800" height="400" fill="#1a2c42" />
+                                    
+                                    <!-- Land -->
+                                    <path d="M0,0 L250,0 L270,50 L350,65 L370,110 L450,130 L500,180 L520,250 L450,300 L350,350 L250,380 L0,400 Z" fill="#2a3f50" />
+                                    <path d="M800,0 L550,0 L530,30 L510,70 L530,100 L560,150 L550,200 L530,250 L540,300 L580,350 L650,380 L800,400 Z" fill="#2a3f50" />
+                                    
+                                    <!-- Port areas -->
+                                    <rect x="250" y="65" width="100" height="30" fill="#3a4f60" />
+                                    <rect x="370" y="110" width="80" height="20" fill="#3a4f60" />
+                                    <rect x="510" y="70" width="40" height="30" fill="#3a4f60" />
+                                    
+                                    <!-- Navigation channels -->
+                                    <path d="M300,200 C350,180 450,180 500,200" stroke="#5eaef4" stroke-width="1" stroke-dasharray="5" fill="none" />
+                                    <path d="M350,250 C400,230 450,230 480,250" stroke="#5eaef4" stroke-width="1" stroke-dasharray="5" fill="none" />
+                                    
+                                    <!-- Distance markers -->
+                                    <circle cx="300" cy="200" r="2" fill="#5eaef4" />
+                                    <circle cx="400" cy="190" r="2" fill="#5eaef4" />
+                                    <circle cx="500" cy="200" r="2" fill="#5eaef4" />
+                                    
+                                    <circle cx="350" cy="250" r="2" fill="#5eaef4" />
+                                    <circle cx="420" cy="240" r="2" fill="#5eaef4" />
+                                    <circle cx="480" cy="250" r="2" fill="#5eaef4" />
+                                    
+                                    <!-- Grid lines -->
+                                    <line x1="0" y1="100" x2="800" y2="100" stroke="#2a3f50" stroke-width="0.5" />
+                                    <line x1="0" y1="200" x2="800" y2="200" stroke="#2a3f50" stroke-width="0.5" />
+                                    <line x1="0" y1="300" x2="800" y2="300" stroke="#2a3f50" stroke-width="0.5" />
+                                    
+                                    <line x1="200" y1="0" x2="200" y2="400" stroke="#2a3f50" stroke-width="0.5" />
+                                    <line x1="400" y1="0" x2="400" y2="400" stroke="#2a3f50" stroke-width="0.5" />
+                                    <line x1="600" y1="0" x2="600" y2="400" stroke="#2a3f50" stroke-width="0.5" />
+                                </svg>
+                                
+                                <!-- Ships (placed with absolute positioning) -->
+                                <div class="absolute" style="top: 160px; left: 380px;">
+                                    <div class="relative">
+                                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                        <div class="absolute -top-5 -left-8 bg-black bg-opacity-70 px-1 rounded text-xs text-white">
+                                            HAM-001
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="absolute" style="top: 210px; left: 420px;">
+                                    <div class="relative">
+                                        <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                        <div class="absolute -top-5 -left-8 bg-black bg-opacity-70 px-1 rounded text-xs text-white">
+                                            BUS-238
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="absolute" style="top: 120px; left: 500px;">
+                                    <div class="relative">
+                                        <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                        <div class="absolute -top-5 -left-8 bg-black bg-opacity-70 px-1 rounded text-xs text-white">
+                                            SIN-845
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="absolute" style="top: 230px; left: 330px;">
+                                    <div class="relative">
+                                        <div class="w-3 h-3 bg-red-500 rounded-full blinking"></div>
+                                        <div class="absolute -top-5 -left-8 bg-red-900 px-1 rounded text-xs text-white">
+                                            HKG-523
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Navigation controls -->
+                                <div class="absolute top-2 right-2 flex flex-col space-y-1">
+                                    <button class="bg-gray-800 bg-opacity-70 text-white p-1 rounded">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button class="bg-gray-800 bg-opacity-70 text-white p-1 rounded">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button class="bg-gray-800 bg-opacity-70 text-white p-1 rounded">
+                                        <i class="fas fa-crosshairs"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Control panel -->
+                                <div class="absolute bottom-3 left-3 bg-gray-900 bg-opacity-80 p-2 rounded text-white text-xs flex space-x-3">
+                                    <div>
+                                        <div class="font-semibold mb-1">표시 필터</div>
+                                        <div class="flex space-x-2">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" checked class="mr-1 h-3 w-3">
+                                                <span>컨테이너선</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" checked class="mr-1 h-3 w-3">
+                                                <input type="checkbox" checked class="mr-1 h-3 w-3">
+                                                <span>벌크선</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="border-l border-gray-600 pl-3">
+                                        <div class="font-semibold mb-1">속도 표시</div>
+                                        <div class="flex space-x-2">
+                                            <label class="flex items-center">
+                                                <input type="radio" name="speed" checked class="mr-1 h-3 w-3">
+                                                <span>노트</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="radio" name="speed" class="mr-1 h-3 w-3">
+                                                <span>km/h</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="demo-container">
+                    <div class="demo-header">
+                        <h2 class="text-white font-bold">선박 상세 정보</h2>
+                    </div>
+                    <div class="demo-body overflow-auto" style="max-height: 320px;">
+                        <!-- Ship Selection -->
+                        <div class="flex items-center bg-blue-900 bg-opacity-30 p-2 rounded mb-4">
+                            <div class="text-xs text-blue-300 mr-3">선박 선택:</div>
+                            <select class="bg-gray-800 text-white border border-gray-700 rounded py-1 px-2 text-sm w-full">
+                                <option>HKG-523 (컨테이너선)</option>
+                                <option>BUS-238 (벌크선)</option>
+                                <option>HAM-001 (컨테이너선)</option>
+                                <option>SIN-845 (유조선)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Selected Ship Info -->
+                        <div class="mb-4">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+                                <div class="text-white font-bold">HKG-523</div>
+                                <div class="text-xs text-red-400 ml-2 px-1 bg-red-900 bg-opacity-30 rounded">경고</div>
+                            </div>
+                            <div class="text-xs text-gray-400">HONG KONG EXPRESS (컨테이너선)</div>
+                        </div>
+                        
+                        <!-- Ship Details -->
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            <div class="bg-gray-800 bg-opacity-50 p-2 rounded">
+                                <div class="text-xs text-gray-400">현재 위치</div>
+                                <div class="text-sm text-white">35°11'N, 128°56'E</div>
+                            </div>
+                            <div class="bg-gray-800 bg-opacity-50 p-2 rounded">
+                                <div class="text-xs text-gray-400">속도</div>
+                                <div class="text-sm text-white">5.2 노트</div>
+                            </div>
+                            <div class="bg-gray-800 bg-opacity-50 p-2 rounded">
+                                <div class="text-xs text-gray-400">방향</div>
+                                <div class="text-sm text-white">82° (동북동)</div>
+                            </div>
+                            <div class="bg-gray-800 bg-opacity-50 p-2 rounded">
+                                <div class="text-xs text-gray-400">예상 도착</div>
+                                <div class="text-sm text-white">14:45</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Warning Message -->
+                        <div class="bg-red-900 bg-opacity-30 border border-red-800 rounded p-2 mb-4">
+                            <div class="flex items-center mb-1">
+                                <i class="fas fa-exclamation-triangle text-red-500 mr-1"></i>
+                                <div class="text-sm text-white font-semibold">경로 이탈 경고</div>
+                            </div>
+                            <p class="text-xs text-gray-300">지정된 항로에서 50m 이탈. 현재 속도로 2분 후 안전거리 위반 예상.</p>
+                        </div>
+                        
+                        <!-- AI Recommendations -->
+                        <div class="bg-blue-900 bg-opacity-30 border border-blue-800 rounded p-2 mb-4">
+                            <div class="flex items-center mb-1">
+                                <i class="fas fa-robot text-blue-500 mr-1"></i>
+                                <div class="text-sm text-white font-semibold">AI 권장 조치</div>
+                            </div>
+                            <div class="text-xs text-gray-300 space-y-1">
+                                <p>1. 선박에 즉시 항로 수정 권고 발송</p>
+                                <p>2. 속도 3노트 이하로 감속 요청</p>
+                                <p>3. 인근 선박 HKG-523에 주의 통보</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex space-x-2">
+                            <button class="demo-btn flex-1 flex items-center justify-center bg-red-600 hover:bg-red-700">
+                                <i class="fas fa-broadcast-tower mr-1"></i> 경고 발송
+                            </button>
+                            <button class="demo-btn flex-1 flex items-center justify-center">
+                                <i class="fas fa-phone-alt mr-1"></i> 연락처
+                            </button>
+                            <button class="demo-btn flex-1 flex items-center justify-center">
+                                <i class="fas fa-history mr-1"></i> 이력
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Equipment & Resource Management Demo -->
+            <h2 id="equipment-management" class="text-2xl font-bold mb-6">장비 및 자원 관리 시스템</h2>
+            <div class="grid grid-cols-4 gap-6 mb-12">
+                <!-- Equipment Status Cards -->
+                <div class="demo-container grid-item">
+                    <div class="demo-header">
+                        <h3 class="text-white font-bold">크레인 상태</h3>
+                    </div>
+                    <div class="demo-body">
+                        <div class="flex justify-center mb-4">
+                            <div class="relative">
+                                <svg width="120" height="120" class="progress-ring">
+                                    <circle
+                                        class="progress-ring-circle"
+                                        stroke="#1f2937"
+                                        stroke-width="8"
+                                        fill="transparent"
+                                        r="50"
+                                        cx="60"
+                                        cy="60"
+                                    />
+                                    <circle
+                                        class="progress-ring-circle"
+                                        stroke="#3b82f6"
+                                        stroke-width="8"
+                                        fill="transparent"
+                                        r="50"
+                                        cx="60"
+                                        cy="60"
+                                        stroke-dasharray="314.16"
+                                        stroke-dashoffset="47.124" /* 15% used: 314.16 * (1 - 0.85) */
+                                    />
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
+                                    <span class="text-2xl font-bold">85%</span>
+                                    <span class="text-xs text-gray-400">가동률</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2 mb-3">
+                            <div class="flex justify-between items-center text-sm">
+                                <div class="text-white">가용 크레인</div>
+                                <div class="demo-status-ok">8/10</div>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <div class="text-white">현재 작업중</div>
+                                <div class="text-blue-400">6</div>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <div class="text-white">대기중</div>
+                                <div class="text-gray-400">2</div>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <div class="text-white">유지보수</div>
+                                <div class="demo-status-warning">2</div>
+                            </div>
+                        </div>
+                        
+                        <button class="demo-btn w-full text-xs">상세 장비 현황</button>
+                    </div>
+                </div>
+                
+                <div class="demo-container grid-item">
+                    <div class="demo-header">
+                        <h3 class="text-white font-bold">이송장비 상태</h3>
+                    </div>
+                    <div class="demo-body">
+                        <div class="flex justify-center mb-4">
+                            <div class="relative">
+                                <svg width="120" height="120" class="progress-ring">
+                                    <circle
+                                        class="progress-ring-circle"
+                                        stroke="#1f2937"
+                                        stroke-width="8"
+                                        fill="transparent"
+                                        r="50"
+                                        cx="60"
+                                        cy="60"
+                                    />
+                                    <circle
+                                        class="progress-ring-circle"
+                                        stroke="#10b981"
+                                        stroke-width="8"
+                                        fill="transparent"
+                                        r="50"
+                                        cx="60"
+                                        cy="60"
+                                        stroke-dasharray="314.16"
+                                        stroke-dashoffset="31.416" /* 10% used: 314.16 * (1 - 0.9) */
+                                    />
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
+                                    <span class="text-2xl font-bold">90%</span>
+                                    <span class="text-xs text-gray-400">가동률</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2 mb-3">
+                            <div class="flex justify-between items-center text-sm">
+                                <div class="text-white">가용 운송차량</div>
+                                <div class="demo-status-ok">24/26</div>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <div class="text-white">현재 작업중</div>
+                                <div class="text-blue-400">18</div>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <div class="text-white">대기중</div>
+                                <div class="text-gray-400">6</div>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <div class="text-white">유지보수</div>
+                                <div class="demo-status-warning">2</div>
+                            </div>
+                        </div>
+                        
+                        <button class="demo-btn w-full text-xs">상세 장비 현황</button>
+                    </div>
+                </div>
+                
+                <div class="demo-container grid-item col-span-2 card-hover">
+                    <div class="demo-header flex justify-between items-center">
+                        <h3 class="text-white font-bold">장비 최적화 추천</h3>
+                        <div class="text-xs text-gray-400">AI 기반 분석</div>
+                    </div>
+                    <div class="demo-body">
+                        <div class="flex space-x-4 mb-4">
+                            <div class="bg-blue-900 bg-opacity-20 rounded-lg p-3 flex-1">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-chart-line text-blue-400 mr-2 card-icon"></i>
+                                    <div class="text-white font-medium">장비 재배치</div>
+                                </div>
+                                <p class="text-sm text-gray-300 mb-2">현재 장비 가동 패턴 및 예상 물동량 기반 최적 장비 배치 추천</p>
+                                <div class="flex items-center text-xs text-blue-300">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    <span>처리 효율 15% 증가 예상</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-green-900 bg-opacity-20 rounded-lg p-3 flex-1">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-calendar-alt text-green-400 mr-2 card-icon"></i>
+                                    <div class="text-white font-medium">유지보수 일정 최적화</div>
+                                </div>
+                                <p class="text-sm text-gray-300 mb-2">장비 상태 및 사용 이력 기반 예측 유지보수 일정 추천</p>
+                                <div class="flex items-center text-xs text-green-300">
+                                    <i class="fas fa-arrow-down mr-1"></i>
+                                    <span>유지보수 비용 22% 절감 예상</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-800 bg-opacity-50 rounded-lg p-3 mb-4">
+                            <div class="mb-3">
+                                <div class="text-white font-medium mb-1">현재 장비 가동 현황</div>
+                                <div class="flex justify-between text-xs">
+                                    <div class="text-gray-400">북항</div>
+                                    <div class="text-gray-400">신항</div>
+                                </div>
+                                <div class="flex items-center mt-1">
+                                    <div class="bg-blue-600 h-3 rounded-l" style="width: 65%"></div>
+                                    <div class="bg-green-600 h-3 rounded-r" style="width: 35%"></div>
+                                </div>
+                                <div class="flex justify-between text-xs mt-1">
+                                    <div class="text-blue-400">65% (과밀)</div>
+                                    <div class="text-green-400">35% (여유)</div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-yellow-900 bg-opacity-30 rounded p-2">
+                                <div class="flex items-center text-yellow-400 mb-1">
+                                    <i class="fas fa-lightbulb mr-1"></i>
+                                    <span class="font-medium">AI 추천</span>
+                                </div>
+                                <p class="text-sm text-gray-300">북항 크레인 2대를 신항으로 재배치하여 18:00-22:00 신항 물동량 피크 대응</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <button class="demo-btn flex-1 bg-blue-600 hover:bg-blue-700">추천 적용</button>
+                            <button class="demo-btn flex-1 bg-gray-700 hover:bg-gray-600">상세 분석</button>
+                            <button class="demo-btn flex-1 bg-gray-700 hover:bg-gray-600">수동 배치</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cargo Tracking Demo -->
+            <h2 id="cargo-tracking" class="text-2xl font-bold mb-6">화물 추적 및 물류 최적화</h2>
+            <div class="grid grid-cols-3 gap-6 mb-16">
+                <div class="demo-container col-span-2">
+                    <div class="demo-header flex justify-between items-center">
+                        <h3 class="text-white font-bold">실시간 화물 흐름 분석</h3>
+                        <div class="flex space-x-2">
+                            <button class="bg-gray-700 text-white text-xs py-1 px-2 rounded hover:bg-gray-600">입항</button>
+                            <button class="bg-blue-600 text-white text-xs py-1 px-2 rounded">하역</button>
+                            <button class="bg-gray-700 text-white text-xs py-1 px-2 rounded hover:bg-gray-600">통관</button>
+                            <button class="bg-gray-700 text-white text-xs py-1 px-2 rounded hover:bg-gray-600">반출</button>
+                        </div>
+                    </div>
+                    <div class="demo-body">
+                        <!-- Container Flow Diagram -->
+                        <div class="relative bg-gray-900 p-4 rounded-lg mb-4" style="height: 250px;">
+                            <!-- Terminal Layout Diagram -->
+                            <svg width="100%" height="100%" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Background -->
+                                <rect x="0" y="0" width="600" height="200" fill="#1a1f36" />
+                                
+                                <!-- Berth -->
+                                <rect x="20" y="20" width="560" height="30" fill="#2a3f58" stroke="#3b82f6" stroke-width="1" />
+                                
+                                <!-- Port Areas -->
+                                <g> <!-- Storage Areas -->
+                                    <rect x="20" y="70" width="80" height="110" fill="#263852" stroke="#3b82f6" stroke-opacity="0.3" stroke-width="1" />
+                                    <rect x="110" y="70" width="80" height="110" fill="#263852" stroke="#3b82f6" stroke-opacity="0.3" stroke-width="1" />
+                                    <rect x="200" y="70" width="80" height="110" fill="#263852" stroke="#3b82f6" stroke-opacity="0.3" stroke-width="1" />
+                                    <rect x="290" y="70" width="80" height="110" fill="#263852" stroke="#3b82f6" stroke-opacity="0.3" stroke-width="1" />
+                                    <rect x="380" y="70" width="80" height="110" fill="#263852" stroke="#3b82f6" stroke-opacity="0.3" stroke-width="1" />
+                                    <rect x="470" y="70" width="80" height="110" fill="#263852" stroke="#3b82f6" stroke-opacity="0.3" stroke-width="1" />
+                                </g>
+                                
+                                <!-- Traffic Indicators (dynamic heat areas) -->
+                                <rect x="110" y="70" width="80" height="110" fill="#3b82f6" fill-opacity="0.4" />
+                                <rect x="290" y="70" width="80" height="110" fill="#3b82f6" fill-opacity="0.2" />
+                                <rect x="470" y="70" width="80" height="110" fill="#ef4444" fill-opacity="0.3" />
+                                
+                                <!-- Labels -->
+                                <text x="60" y="125" font-size="8" fill="white" text-anchor="middle">A 구역</text>
+                                <text x="150" y="125" font-size="8" fill="white" text-anchor="middle">B 구역</text>
+                                <text x="240" y="125" font-size="8" fill="white" text-anchor="middle">C 구역</text>
+                                <text x="330" y="125" font-size="8" fill="white" text-anchor="middle">D 구역</text>
+                                <text x="420" y="125" font-size="8" fill="white" text-anchor="middle">E 구역</text>
+                                <text x="510" y="125" font-size="8" fill="white" text-anchor="middle">F 구역</text>
+                                
+                                <!-- Flow Paths -->
+                                <path d="M300,35 C300,50 150,50 150,70" stroke="#3b82f6" stroke-width="2" fill="none" />
+                                <path d="M300,35 C300,50 330,50 330,70" stroke="#3b82f6" stroke-width="1" fill="none" />
+                                <path d="M300,35 C300,50 510,50 510,70" stroke="#ef4444" stroke-width="2" fill="none" />
+                                
+                                <!-- Activity Nodes -->
+                                <circle cx="300" cy="35" r="5" fill="#3b82f6" />
+                                <circle cx="150" cy="70" r="4" fill="#3b82f6" />
+                                <circle cx="330" cy="70" r="3" fill="#3b82f6" />
+                                <circle cx="510" cy="70" r="5" fill="#ef4444" />
+                                
+                                <!-- Crane Indicators -->
+                                <rect x="290" y="20" width="20" height="10" fill="#3b82f6" />
+                                <rect x="320" y="20" width="20" height="10" fill="#3b82f6" opacity="0.6" />
+                                <rect x="350" y="20" width="20" height="10" fill="#3b82f6" opacity="0.4" />
+                                
+                                <!-- Motion Indicators (dotted) -->
+                                <circle cx="250" cy="45" r="1" fill="#3b82f6" />
+                                <circle cx="270" cy="45" r="1" fill="#3b82f6" />
+                                <circle cx="290" cy="45" r="1" fill="#3b82f6" />
+                                
+                                <circle cx="350" cy="45" r="1" fill="#3b82f6" />
+                                <circle cx="370" cy="45" r="1" fill="#3b82f6" />
+                                
+                                <circle cx="420" cy="45" r="1" fill="#ef4444" />
+                                <circle cx="440" cy="45" r="1" fill="#ef4444" />
+                                <circle cx="460" cy="45" r="1" fill="#ef4444" />
+                                <circle cx="480" cy="45" r="1" fill="#ef4444" />
+                            </svg>
+                            
+                            <!-- Legend -->
+                            <div class="absolute bottom-2 right-2 bg-gray-800 bg-opacity-80 p-1 rounded text-xs text-white">
+                                <div class="flex items-center space-x-3">
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-blue-500 mr-1"></div>
+                                        <span>정상</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-red-500 mr-1"></div>
+                                        <span>지연</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-2 h-2 bg-yellow-500 mr-1"></div>
+                                        <span>주의</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Status Information -->
+                        <div class="grid grid-cols-4 gap-3 mb-4">
+                            <div class="bg-gray-800 bg-opacity-50 p-2 rounded">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-sm text-white">처리중</div>
+                                    <div class="text-sm text-blue-400">128</div>
+                                </div>
+                                <div class="text-xs text-gray-400">컨테이너</div>
+                            </div>
+                            
+                            <div class="bg-gray-800 bg-opacity-50 p-2 rounded">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-sm text-white">대기중</div>
+                                    <div class="text-sm text-yellow-400">43</div>
+                                </div>
+                                <div class="text-xs text-gray-400">컨테이너</div>
+                            </div>
+                            
+                            <div class="bg-gray-800 bg-opacity-50 p-2 rounded">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-sm text-white">지연</div>
+                                    <div class="text-sm text-red-400">15</div>
+                                </div>
+                                <div class="text-xs text-gray-400">컨테이너</div>
+                            </div>
+                            
+                            <div class="bg-gray-800 bg-opacity-50 p-2 rounded">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-sm text-white">완료</div>
+                                    <div class="text-sm text-green-400">894</div>
+                                </div>
+                                <div class="text-xs text-gray-400">당일 누적</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Bottleneck Alerts -->
+                        <div class="bg-red-900 bg-opacity-20 rounded-lg p-3 border border-red-800">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center">
+                                    <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                                    <div class="text-white font-medium">현재 병목 구간 감지</div>
+                                </div>
+                                <span class="text-xs bg-red-800 text-white px-2 py-0.5 rounded">조치 필요</span>
+                            </div>
+                            
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-gray-300">F 구역 하역 지연</div>
+                                    <div class="text-red-400">+32분</div>
+                                </div>
+                                <div class="text-xs text-gray-400">SIN-845 화물 15개 컨테이너 대기 중</div>
+                                
+                                <div class="bg-gray-900 bg-opacity-40 p-2 rounded mt-1">
+                                    <div class="text-blue-400 text-xs font-medium mb-1">AI 추천 조치</div>
+                                    <p class="text-xs text-gray-300">E 구역에서 야드 트랙터 2대 추가 배치하여 F 구역 하역 작업 지원</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cargo Search and Tracking -->
+                <div class="demo-container">
+                    <div class="demo-header flex justify-between items-center">
+                        <h3 class="text-white font-bold">화물 검색 및 추적</h3>
+                        <div>
+                            <i class="fas fa-qrcode text-gray-400 cursor-pointer hover:text-white"></i>
+                        </div>
+                    </div>
+                    <div class="demo-body">
+                        <!-- Search Bar -->
+                        <div class="flex mb-4">
+                            <input type="text" placeholder="컨테이너 번호 또는 BL 번호" class="bg-gray-800 border border-gray-700 text-white px-3 py-2 rounded-l w-full text-sm" value="BSIU1234567" />
+                            <button class="bg-blue-600 text-white px-3 py-2 rounded-r hover:bg-blue-700">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Container Info -->
+                        <div class="bg-gray-800 bg-opacity-50 p-3 rounded mb-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="text-white font-medium">BSIU1234567</div>
+                                <div class="px-2 py-0.5 bg-green-900 text-green-400 text-xs rounded">진행중</div>
+                            </div>
+                            <div class="text-xs text-gray-400 mb-3">40ft 컨테이너 | 수입 | 중국 상하이 출발</div>
+                            
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-xs">
+                                    <div class="text-gray-400">도착시간</div>
+                                    <div class="text-white">2025-04-29 08:45</div>
+                                </div>
+                                <div class="flex justify-between text-xs">
+                                    <div class="text-gray-400">하역완료</div>
+                                    <div class="text-white">2025-04-30 10:12</div>
+                                </div>
+                                <div class="flex justify-between text-xs">
+                                    <div class="text-gray-400">통관상태</div>
+                                    <div class="text-yellow-400">진행중</div>
+                                </div>
+                                <div class="flex justify-between text-xs">
+                                    <div class="text-gray-400">반출예정</div>
+                                    <div class="text-blue-400">2025-04-30 16:30</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tracking Timeline -->
+                        <div class="mb-4 relative pl-6">
+                            <div class="absolute left-2 top-0 bottom-0 w-0.5 bg-gray-700"></div>
+                            
+                            <div class="mb-3 relative">
+                                <div class="w-3 h-3 bg-green-500 rounded-full absolute -left-7 top-1"></div>
+                                <div>
+                                    <div class="text-sm text-white">선박 도착</div>
+                                    <div class="text-xs text-gray-400">2025-04-29 08:45</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 relative">
+                                <div class="w-3 h-3 bg-green-500 rounded-full absolute -left-7 top-1"></div>
+                                <div>
+                                    <div class="text-sm text-white">하역 시작</div>
+                                    <div class="text-xs text-gray-400">2025-04-29 14:30</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 relative">
+                                <div class="w-3 h-3 bg-green-500 rounded-full absolute -left-7 top-1"></div>
+                                <div>
+                                    <div class="text-sm text-white">하역 완료</div>
+                                    <div class="text-xs text-gray-400">2025-04-30 10:12</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 relative">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full absolute -left-7 top-1 pulse"></div>
+                                <div>
+                                    <div class="text-sm text-white">통관 진행중</div>
+                                    <div class="text-xs text-gray-400">2025-04-30 11:05</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 relative opacity-50">
+                                <div class="w-3 h-3 bg-gray-500 rounded-full absolute -left-7 top-1"></div>
+                                <div>
+                                    <div class="text-sm text-white">반출 대기</div>
+                                    <div class="text-xs text-gray-400">예정됨</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Current Location -->
+                        <div class="bg-blue-900 bg-opacity-20 p-3 rounded border border-blue-800">
+                            <div class="flex items-center mb-2">
+                                <i class="fas fa-map-marker-alt text-blue-400 mr-2"></i>
+                                <div class="text-white font-medium">현재 위치</div>
+                            </div>
+                            <p class="text-sm text-gray-300">B 구역 보관 중 (위치: B42-R08-C03)</p>
+                            <button class="text-xs text-blue-400 hover:text-blue-300 mt-1">지도에서 보기 →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Export Demo Readme -->
+            <div id="demo-readme" class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-bold mb-4 text-blue-900">PORT-AI 데모 화면 가이드</h2>
+                <p class="text-gray-600 mb-4">위 데모 화면들은 PORT-AI 시스템의 주요 인터페이스를 시각화한 예시입니다. 실제 구현 시에는 다음과 같은 기능들이 포함됩니다:</p>
+                
+                <div class="space-y-2 mb-4">
+                    <div class="flex items-start">
+                        <div class="bg-blue-100 rounded-full w-5 h-5 flex items-center justify-center text-blue-600 font-bold mt-0.5 mr-2 flex-shrink-0">1</div>
+                        <div>
+                            <h3 class="font-semibold text-gray-800">통합 대시보드</h3>
+                            <p class="text-sm text-gray-600">항만 전체의 상황을 한눈에 파악할 수 있는 메인 대시보드로, 실시간 현황 정보와 알림을 제공합니다.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="bg-blue-100 rounded-full w-5 h-5 flex items-center justify-center text-blue-600 font-bold mt-0.5 mr-2 flex-shrink-0">2</div>
+                        <div>
+                            <h3 class="font-semibold text-gray-800">선박 트래픽 관리</h3>
+                            <p class="text-sm text-gray-600">항로 안전 관리 및 최적 입출항 스케줄링을 위한 선박 트래픽 모니터링 및 관리 시스템입니다.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="bg-blue-100 rounded-full w-5 h-5 flex items-center justify-center text-blue-600 font-bold mt-0.5 mr-2 flex-shrink-0">3</div>
+                        <div>
+                            <h3 class="font-semibold text-gray-800">장비 및 자원 관리</h3>
+                            <p class="text-sm text-gray-600">항만 장비의 가동 상황을 모니터링하고 최적 배치 및 유지보수 일정을 관리하는 시스템입니다.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start">
+                        <div class="bg-blue-100 rounded-full w-5 h-5 flex items-center justify-center text-blue-600 font-bold mt-0.5 mr-2 flex-shrink-0">4</div>
+                        <div>
+                            <h3 class="font-semibold text-gray-800">화물 추적 및 물류 최적화</h3>
+                            <p class="text-sm text-gray-600">개별 화물의 위치와 상태를 실시간으로 추적하고, 항만 내 물류 흐름을 최적화하는 시스템입니다.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-gray-600 mb-4">
+                    이 데모 인터페이스는 PORT-AI 시스템의 주요 기능과 시각적 구성을 보여주기 위한 예시로, 실제 구현 시에는 부산항만공사의 브랜드 아이덴티티와 기존 시스템과의 통합성을 고려하여 디자인될 것입니다.
+                </p>
+                
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <h3 class="text-lg font-semibold text-blue-900 mb-2">PORT-AI 시스템 구현 계획</h3>
+                    <p class="text-sm text-gray-600 mb-2">
+                        본 데모 화면은 단계적 구현 계획에 따라 개발될 예정이며, 최종 시스템은 부산항만공사의 기존 인프라 및 사용자 요구사항에 최적화될 것입니다.
+                    </p>
+                    <p class="text-sm text-gray-600">
+                        데이터 시각화, 사용자 인터페이스, AI 기반 의사결정 지원 등 PORT-AI의 핵심 기능들은 실제 항만 운영 환경에서의 사용성과 효율성을 극대화하도록 설계됩니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animations for ships
+            setInterval(function() {
+                const ships = document.querySelectorAll('.ship');
+                ships.forEach(ship => {
+                    const randomOffset = (Math.random() - 0.5) * 4;
+                    const currentTop = parseInt(ship.style.top);
+                    const currentLeft = parseInt(ship.style.left);
+                    
+                    ship.style.top = (currentTop + randomOffset) + 'px';
+                    ship.style.left = (currentLeft + randomOffset) + 'px';
+                });
+            }, 2000);
+            
+            // Add smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 20,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Update active tab styling
+                        document.querySelectorAll('.inline-flex a').forEach(tab => {
+                            if (tab.getAttribute('href') === targetId) {
+                                tab.classList.remove('bg-gray-200', 'text-gray-800');
+                                tab.classList.add('bg-blue-600', 'text-white');
+                            } else {
+                                tab.classList.remove('bg-blue-600', 'text-white');
+                                tab.classList.add('bg-gray-200', 'text-gray-800');
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
