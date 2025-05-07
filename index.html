@@ -3,35 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 기반 항만 통합 스마트 관제 시스템 (PORT-AI) 제안서</title>
+    <title>PORT-AI 제안서 - 항만혁신 공모전</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="./assets/css/style.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#0056b3',
-                        secondary: '#00a0e9',
-                        accent: '#ff6b6b',
-                        darkblue: '#003366',
-                        lightblue: '#e6f7ff',
-                    }
-                }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%232563eb' fill-opacity='0.05'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .hexagon-bg {
+            background-color: #f0f9ff;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%233b82f6' fill-opacity='0.05' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .wave-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+        }
+
+        .wave-top svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 70px;
+        }
+
+        .wave-top .shape-fill {
+            fill: #1E40AF;
+        }
+        
+        .wave-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+
+        .wave-bottom svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 70px;
+        }
+
+        .wave-bottom .shape-fill {
+            fill: #1E40AF;
+        }
+        
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .7;
             }
         }
-    </script>
+        
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1);
+        }
+        
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .timeline-item {
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-item:hover .timeline-dot {
+            transform: scale(1.2);
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
+        }
+        
+        .system-card {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .system-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(219, 234, 254, 0.3) 0%, rgba(191, 219, 254, 0) 50%);
+            z-index: -1;
+        }
+        
+        .border-glow:hover {
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
-    <!-- 헤더 -->
-    <header class="bg-primary text-white py-6 shadow-md">
-        <div class="container mx-auto px-4 md:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <h1 class="text-2xl font-bold">부산항만공사</h1>
-                    <p class="text-sm opacity-90">2025년 항만혁신 국민제안 공모</p>
-                </div>
-                <nav>
+<body class="bg-pattern">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-ship text-2xl"></i>
+                <span class="font-bold text-xl md:text-2xl">PORT-AI 제안서</span>
+            </div>
+               <nav>
                     <ul class="flex space-x-6">
                         <li><a href="index.html" class="hover:text-lightblue font-bold">개요</a></li>
                         <li><a href="background.html" class="hover:text-lightblue">추진배경</a></li>
@@ -40,170 +143,900 @@
                         <li><a href="demo.html" class="text-accent hover:underline">데모 화면</a></li>
                     </ul>
                 </nav>
-            </div>
         </div>
     </header>
 
-    <!-- 메인 배너 -->
-    <section class="bg-darkblue text-white py-20 relative overflow-hidden">
-        <div class="absolute inset-0 opacity-20 bg-cover bg-center z-0" style="background-image: url('./assets/images/port-aerial.jpg');"></div>
-        <div class="container mx-auto px-4 md:px-8 relative z-10">
+    <!-- Hero Section -->
+    <section class="relative py-20 bg-gradient-to-r from-blue-900 to-blue-700 text-white overflow-hidden">
+        <div class="absolute inset-0">
+            <div class="absolute inset-0" style="background-image: url('https://images.pexels.com/photos/2226458/pexels-photo-2226458.jpeg?auto=compress&cs=tinysrgb&w=1920'); background-size: cover; background-position: center; opacity: 0.3;"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-900 to-blue-700 opacity-80"></div>
+        </div>
+        
+        <!-- Animated Wave Bottom -->
+        <div class="wave-bottom">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
+            </svg>
+        </div>
+        
+        <div class="container mx-auto px-4 relative">
             <div class="max-w-3xl">
-                <h1 class="text-4xl md:text-5xl font-bold mb-6">AI 기반 항만 통합 스마트 관제 시스템</h1>
-                <h2 class="text-2xl md:text-3xl font-light mb-8">PORT-AI</h2>
-                <p class="text-xl leading-relaxed opacity-90">인공지능과 디지털 트윈 기술로 구현하는 부산항의 미래</p>
-                <div class="mt-10 flex flex-wrap gap-4">
-                    <!--a href="background.html" class="bg-white text-darkblue py-3 px-6 rounded-md font-medium hover:bg-gray-100 transition">추진배경</a-->
-                    <a href="details.html" class="bg-accent text-white py-3 px-6 rounded-md font-medium hover:bg-opacity-90 transition">세부내용</a>
-                    <a href="https://notebooklm.google.com/notebook/62882497-f644-4c74-8308-9dbc96364970/audio" class="bg-secondary text-white py-3 px-6 rounded-md font-medium hover:bg-opacity-90 transition">음성으로 듣기</a>
-                    <a href="demo.html" class="bg-transparent border border-white text-white py-3 px-6 rounded-md font-medium hover:bg-white hover:text-darkblue transition">데모 화면</a>
+                <div class="inline-block bg-blue-800 bg-opacity-70 rounded-lg px-3 py-1 text-sm font-semibold mb-4">
+                    2025 항만혁신 국민제안 공모전
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-4 leading-tight">AI 기반 항만 통합<br>스마트 관제 시스템</h1>
+                <div class="flex items-center space-x-2 mb-6">
+                    <span class="bg-blue-600 rounded-full w-2 h-2 pulse"></span>
+                    <p class="text-lg">PORT-AI: 차세대 디지털 항만 혁신 솔루션</p>
+                </div>
+                <p class="text-lg text-blue-100 mb-8 max-w-2xl">인공지능, 빅데이터, IoT 기술을 활용하여 부산항의 모든 요소를 실시간으로 통합 관제하고 최적화하는 미래형 스마트 항만 시스템</p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="details.html" class="bg-white text-blue-900 px-6 py-3 rounded-lg font-semibold hover:bg-blue-100 transition flex items-center justify-center">
+                        <i class="fas fa-info-circle mr-2"></i>상세 내용
+                    </a>
+                    <a href="https://notebooklm.google.com/notebook/62882497-f644-4c74-8308-9dbc96364970/audio" class="bg-transparent border-2 border-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-900 transition flex items-center justify-center">
+                        <i class="fas fa-lightbulb mr-2"></i>음성으로 듣기
+                    </a>
+                    <a href="port-ai-demo-screens.html" class="bg-blue-500 border-2 border-blue-500 px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 hover:border-blue-600 text-white transition flex items-center justify-center">
+                        <i class="fas fa-desktop mr-2"></i>데모 화면 보기
+                    </a>
                 </div>
             </div>
         </div>
+        <div class="text-xs text-white text-opacity-50 absolute bottom-2 right-4">
+            이미지 출처: Pexels (Shaah Shahidh)
+        </div>
     </section>
 
-    <!-- 제안 개요 -->
-    <section id="overview" class="py-16 bg-white">
-        <div class="container mx-auto px-4 md:px-8">
-            <div class="max-w-4xl mx-auto">
-                <h2 class="text-3xl font-bold text-center mb-12 text-primary">제안 개요</h2>
-                <div class="bg-lightblue p-6 rounded-lg mb-8 leading-relaxed">
-                    <p class="mb-4">본 제안은 인공지능(AI), 빅데이터, IoT, 디지털 트윈 기술을 융합하여 부산항의 모든 운영 요소(선박, 화물, 장비, 인력 등)를 실시간으로 통합 관제하는 지능형 시스템입니다.</p>
-                    <p class="mb-4">분절된 기존 시스템들을 유기적으로 연결하고 데이터 기반 의사결정 체계를 구축함으로써, 항만 운영의 효율성과 안전성을 획기적으로 향상시키고 국제 경쟁력을 강화합니다.</p>
-                    <p>본 시스템은 예측 분석을 통한 선제적 대응과 자원 최적화를 지원하여 스마트 항만으로의 전환을 가속화합니다.</p>
+    <!-- Overview Section -->
+    <section id="overview" class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-12">
+                    <h5 class="text-blue-600 font-semibold">제안 개요</h5>
+                    <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-4">PORT-AI: 디지털 혁신의 새로운 기준</h2>
+                    <p class="text-gray-600 max-w-3xl mx-auto">세계적인 항만 디지털 전환 추세에 발맞춰, 부산항의 지속가능한 경쟁력 확보를 위한 통합형 스마트 관제 시스템을 제안합니다.</p>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-secondary">
-                        <div class="text-secondary mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">디지털 혁신</h3>
-                        <p class="text-gray-600">디지털 트윈 기술과 AI 기반 분석으로 항만 운영의 디지털 전환을 구현합니다.</p>
-                        <div class="mt-4">
-                            <a href="details.html#digital-innovation" class="text-secondary hover:underline">자세히 보기 →</a>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-secondary">
-                        <div class="text-secondary mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">안전재난대응 혁신</h3>
-                        <p class="text-gray-600">예측 분석과 실시간 모니터링으로 항만 내 안전사고와 재난 상황에 선제적으로 대응합니다.</p>
-                        <div class="mt-4">
-                            <a href="details.html#safety-innovation" class="text-secondary hover:underline">자세히 보기 →</a>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-secondary">
-                        <div class="text-secondary mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2">사회공헌 혁신</h3>
-                        <p class="text-gray-600">환경 영향 감소와 지역사회 상생을 위한 스마트 항만 생태계를 구축합니다.</p>
-                        <div class="mt-4">
-                            <a href="details.html#social-innovation" class="text-secondary hover:underline">자세히 보기 →</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mt-16 text-center">
-                    <h3 class="text-2xl font-bold text-darkblue mb-6">제안 구분</h3>
-                    <div class="inline-block bg-white p-6 rounded-lg shadow-md">
-                        <div class="flex items-center justify-center space-x-8">
-                            <div class="flex items-center">
-                                <div class="w-6 h-6 border-2 border-primary flex items-center justify-center rounded">
-                                    <div class="w-3 h-3 bg-primary rounded-sm"></div>
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-12">
+                    <div class="grid md:grid-cols-2">
+                        <div class="p-8 flex items-center">
+                            <div>
+                                <div class="inline-block bg-blue-100 text-blue-700 rounded-full px-3 py-1 text-sm font-semibold mb-4">
+                                    디지털 혁신 분야
                                 </div>
-                                <span class="ml-2 font-semibold text-darkblue">디지털 혁신</span>
+                                <h3 class="text-2xl font-bold mb-4">부산항 통합 스마트 관제</h3>
+                                <p class="text-gray-600 mb-6">PORT-AI는 인공지능, 빅데이터, IoT 기술을 활용하여 부산항의 선박, 화물, 장비, 인력 등 모든 요소를 실시간으로 통합 관제하는 스마트 시스템입니다.</p>
+                                <div class="space-y-3">
+                                    <div class="flex items-center">
+                                        <div class="bg-blue-100 rounded-full p-2 mr-3">
+                                            <i class="fas fa-brain text-blue-600"></i>
+                                        </div>
+                                        <span class="text-sm text-gray-700">AI 기반 의사결정 지원</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="bg-blue-100 rounded-full p-2 mr-3">
+                                            <i class="fas fa-chart-line text-blue-600"></i>
+                                        </div>
+                                        <span class="text-sm text-gray-700">실시간 데이터 분석 및 예측</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="bg-blue-100 rounded-full p-2 mr-3">
+                                            <i class="fas fa-exchange-alt text-blue-600"></i>
+                                        </div>
+                                        <span class="text-sm text-gray-700">통합 시스템 아키텍처</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex items-center">
-                                <div class="w-6 h-6 border-2 border-gray-300 flex items-center justify-center rounded"></div>
-                                <span class="ml-2 text-gray-500">안전재난대응 혁신</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-6 h-6 border-2 border-gray-300 flex items-center justify-center rounded"></div>
-                                <span class="ml-2 text-gray-500">사회공헌 혁신</span>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center p-8">
+                            <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 border border-white border-opacity-20 text-white">
+                                <div class="relative w-full h-64 mb-6 bg-blue-800 bg-opacity-30 rounded-lg overflow-hidden flex items-center justify-center border border-white border-opacity-20">
+                                    <i class="fas fa-ship text-8xl text-white text-opacity-20"></i>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div class="text-center">
+                                            <h4 class="text-xl font-bold mb-2">디지털 트윈 기술</h4>
+                                            <p class="text-sm text-blue-100">부산항 전체를 3D 가상환경으로 구현</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="bg-blue-800 bg-opacity-30 rounded-lg p-4 border border-white border-opacity-20 flex flex-col items-center justify-center text-center">
+                                        <i class="fas fa-robot text-2xl mb-2"></i>
+                                        <h5 class="font-semibold text-sm mb-1">자율 운영</h5>
+                                        <p class="text-xs text-blue-100">AI 기반 자율 의사결정</p>
+                                    </div>
+                                    <div class="bg-blue-800 bg-opacity-30 rounded-lg p-4 border border-white border-opacity-20 flex flex-col items-center justify-center text-center">
+                                        <i class="fas fa-project-diagram text-2xl mb-2"></i>
+                                        <h5 class="font-semibold text-sm mb-1">통합 플랫폼</h5>
+                                        <p class="text-xs text-blue-100">모든 항만 시스템 연계</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 섹션 네비게이션 -->
-    <section class="py-12 bg-lightblue">
-        <div class="container mx-auto px-4 md:px-8">
-            <div class="max-w-5xl mx-auto">
-                <h2 class="text-2xl font-bold text-center mb-8 text-primary">제안서 섹션 바로가기</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <a href="background.html" class="group">
-                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all">
-                            <div class="flex items-center mb-4">
-                                <div class="bg-primary rounded-full w-10 h-10 flex items-center justify-center text-white mr-3">1</div>
-                                <h3 class="text-xl font-bold text-darkblue">추진배경</h3>
-                            </div>
-                            <p class="text-gray-600 mb-4">부산항의 현 위상, 문제점, 시장 환경 변화와 아이디어 도입 필요성</p>
-                            <span class="text-primary font-medium group-hover:underline">자세히 보기 →</span>
-                        </div>
-                    </a>
-                    
-                    <a href="details.html" class="group">
-                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all">
-                            <div class="flex items-center mb-4">
-                                <div class="bg-primary rounded-full w-10 h-10 flex items-center justify-center text-white mr-3">2</div>
-                                <h3 class="text-xl font-bold text-darkblue">세부내용</h3>
-                            </div>
-                            <p class="text-gray-600 mb-4">AI 기반 통합 관제 플랫폼 구축, 지능형 관리 시스템, 물류 프로세스 최적화</p>
-                            <span class="text-primary font-medium group-hover:underline">자세히 보기 →</span>
-                        </div>
-                    </a>
-                    
-                    <a href="benefits.html" class="group">
-                        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-all">
-                            <div class="flex items-center mb-4">
-                                <div class="bg-primary rounded-full w-10 h-10 flex items-center justify-center text-white mr-3">3</div>
-                                <h3 class="text-xl font-bold text-darkblue">기대효과</h3>
-                            </div>
-                            <p class="text-gray-600 mb-4">운영 효율성 향상, 항만 처리능력 증대, 안전성 강화, 환경영향 감소와 파급효과</p>
-                            <span class="text-primary font-medium group-hover:underline">자세히 보기 →</span>
-                        </div>
-                    </a>
                 </div>
                 
-                <div class="text-center mt-8">
-                    <a href="demo.html" class="inline-block bg-accent text-white py-3 px-8 rounded-md font-medium hover:bg-opacity-90 transition">데모 화면 보기</a>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-blue-600 feature-card">
+                        <div class="bg-blue-100 inline-block rounded-full p-3 mb-4">
+                            <i class="fas fa-eye text-xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">실시간 모니터링</h3>
+                        <p class="text-gray-600">항만 내 모든 요소를 실시간으로 모니터링하고 상황을 시각화하여 직관적으로 파악할 수 있습니다.</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-green-600 feature-card">
+                        <div class="bg-green-100 inline-block rounded-full p-3 mb-4">
+                            <i class="fas fa-chart-bar text-xl text-green-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">데이터 기반 의사결정</h3>
+                        <p class="text-gray-600">방대한 항만 데이터를 분석하여 최적의 운영 방안을 도출하고 효율적인 의사결정을 지원합니다.</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-purple-600 feature-card">
+                        <div class="bg-purple-100 inline-block rounded-full p-3 mb-4">
+                            <i class="fas fa-cogs text-xl text-purple-600"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">자원 최적화</h3>
+                        <p class="text-gray-600">인력, 장비, 시설 등 항만 자원을 AI 기반으로 최적 배치하여 효율성을 극대화합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Problems Section -->
+    <section id="problems" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-12">
+                    <h5 class="text-red-600 font-semibold">현황 및 문제점</h5>
+                    <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-4">부산항이 직면한 도전 과제</h2>
+                    <p class="text-gray-600 max-w-3xl mx-auto">세계 주요 항만들의 디지털 전환 가속화 속에서 부산항은 다음과 같은 문제점에 직면해 있습니다.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105">
+                        <div class="bg-red-600 h-2"></div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="bg-red-100 rounded-full h-12 w-12 flex items-center justify-center">
+                                    <i class="fas fa-exclamation-triangle text-xl text-red-600"></i>
+                                </div>
+                                <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded">핵심 이슈</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">분절된 관제 체계</h3>
+                            <p class="text-gray-600 mb-4">현재 부산항은 선박관제(VTS), 터미널 운영 시스템(TOS), 항만물류정보시스템(Port-MIS) 등 여러 시스템이 독립적으로 운영되어 통합적 의사결정이 어렵습니다.</p>
+                            
+                            <div class="bg-red-50 rounded-lg p-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-info-circle text-red-600 mr-2"></i>
+                                    <span class="font-medium text-red-900">주요 문제점</span>
+                                </div>
+                                <ul class="space-y-2 text-sm text-gray-700">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-times-circle text-red-500 mt-1 mr-2"></i>
+                                        <span>시스템 간 정보 단절로 총체적 상황 파악 불가</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-times-circle text-red-500 mt-1 mr-2"></i>
+                                        <span>중복 데이터 입력 및 업무 비효율 발생</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-times-circle text-red-500 mt-1 mr-2"></i>
+                                        <span>의사결정 지연으로 인한 운영 효율성 저하</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-rows-2 gap-6">
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                            <div class="bg-orange-600 h-2"></div>
+                            <div class="p-6">
+                                <div class="flex items-start mb-4">
+                                    <div class="bg-orange-100 rounded-full h-10 w-10 flex items-center justify-center mr-4">
+                                        <i class="fas fa-clock text-orange-600"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold mb-1">비효율적 자원 활용</h3>
+                                        <p class="text-gray-600 text-sm">선박 대기시간 증가, 장비 유휴시간 발생, 인력 배치 비효율 등으로 불필요한 비용과 시간 손실이 발생합니다.</p>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <div class="text-center">
+                                        <div class="font-bold text-orange-600">18.5%</div>
+                                        <div class="text-gray-500">장비 비가동률</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="font-bold text-orange-600">12.3hr</div>
+                                        <div class="text-gray-500">평균 대기시간</div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="font-bold text-orange-600">25%</div>
+                                        <div class="text-gray-500">불필요 이동</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                            <div class="bg-yellow-600 h-2"></div>
+                            <div class="p-6">
+                                <div class="flex items-start mb-4">
+                                    <div class="bg-yellow-100 rounded-full h-10 w-10 flex items-center justify-center mr-4">
+                                        <i class="fas fa-bolt text-yellow-600"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold mb-1">실시간 대응 한계</h3>
+                                        <p class="text-gray-600 text-sm">기상 악화, 교통 혼잡, 장비 고장 등 예기치 않은 상황에 대한 실시간 대응 체계가 미흡합니다.</p>
+                                    </div>
+                                </div>
+                                <div class="bg-yellow-50 rounded-lg p-3 text-sm text-gray-700">
+                                    <div class="flex items-center mb-1">
+                                        <i class="fas fa-exclamation-circle text-yellow-600 mr-2"></i>
+                                        <span class="font-medium">대응 시간 지연</span>
+                                    </div>
+                                    <p>항만 내 이슈 발생 시 최초 감지에서 대응까지 평균 28분 소요되어 2차 문제 발생 위험 높음</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-800 rounded-xl shadow-xl overflow-hidden">
+                    <div class="p-6 text-white">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i class="fas fa-industry mr-2"></i>산업 및 기술 발달에 따른 환경 변화
+                        </h3>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div class="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm border border-white border-opacity-20">
+                                <div class="text-blue-200 mb-2"><i class="fas fa-ship text-2xl"></i></div>
+                                <h4 class="font-semibold mb-2">초대형 선박 증가</h4>
+                                <p class="text-sm text-blue-100">2만 TEU 이상의 초대형 컨테이너선이 증가하면서 효율적인 항만 운영의 중요성이 커지고 있습니다.</p>
+                            </div>
+                            <div class="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm border border-white border-opacity-20">
+                                <div class="text-blue-200 mb-2"><i class="fas fa-globe-americas text-2xl"></i></div>
+                                <h4 class="font-semibold mb-2">글로벌 공급망 복잡화</h4>
+                                <p class="text-sm text-blue-100">코로나19 이후 글로벌 공급망의 불확실성이 증가하여 유연하고 신속한 항만 운영 체계의 필요성이 강조되고 있습니다.</p>
+                            </div>
+                            <div class="bg-white bg-opacity-10 rounded-lg p-4 backdrop-blur-sm border border-white border-opacity-20">
+                                <div class="text-blue-200 mb-2"><i class="fas fa-microchip text-2xl"></i></div>
+                                <h4 class="font-semibold mb-2">디지털 기술 발전</h4>
+                                <p class="text-sm text-blue-100">AI, 빅데이터, IoT, 클라우드 등 4차 산업혁명 기술의 발전으로 스마트 항만 구축을 위한 기술적 기반이 마련되었습니다.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 푸터 -->
-    <footer class="bg-darkblue text-white py-10">
-        <div class="container mx-auto px-4 md:px-8">
+    <!-- Solution Section -->
+    <section id="solution" class="py-16 hexagon-bg relative">
+        <div class="container mx-auto px-4">
             <div class="max-w-5xl mx-auto">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="mb-6 md:mb-0">
-                        <h2 class="text-xl font-bold">PORT-AI 제안서</h2>
-                        <p class="text-sm opacity-75 mt-1">2025년 항만혁신 국민제안 공모</p>
+                <div class="text-center mb-12">
+                    <h5 class="text-blue-600 font-semibold">솔루션</h5>
+                    <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-4">PORT-AI 시스템 아키텍처</h2>
+                    <p class="text-gray-600 max-w-3xl mx-auto">데이터 기반의 지능형 통합 관제를 위한 차세대 항만 운영 플랫폼</p>
+                </div>
+                
+                <!-- System Architecture Diagram -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-16 border-glow">
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-4 text-white">
+                        <h3 class="text-xl font-bold">PORT-AI 시스템 아키텍처</h3>
                     </div>
-                    <div class="text-sm opacity-75 text-center md:text-right">
-                        <p>제안자: 박용환</p>
-                        <p>제출일: 2025년 5월 7일</p>
+                    <div class="p-8">
+                        <div class="mx-auto max-w-3xl">
+                            <!-- User Interface Layer -->
+                            <div class="bg-blue-100 p-4 rounded-lg mb-4 text-center border-2 border-blue-200">
+                                <div class="flex justify-center items-center">
+                                    <i class="fas fa-desktop text-blue-600 mr-2"></i>
+                                    <h4 class="font-bold text-blue-900">통합 대시보드 및 의사결정 지원 시스템</h4>
+                                </div>
+                                <p class="text-sm text-blue-700 mt-1">실시간 모니터링, 상황인식, 시뮬레이션, 알림, 리포팅</p>
+                            </div>
+                            
+                            <!-- Bidirectional Arrow -->
+                            <div class="flex justify-center mb-4">
+                                <div class="flex flex-col items-center">
+                                    <i class="fas fa-arrow-down text-blue-500"></i>
+                                    <i class="fas fa-arrow-up text-blue-500"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- AI Analysis Layer -->
+                            <div class="grid grid-cols-3 gap-4 mb-4">
+                                <div class="bg-green-100 p-3 rounded-lg text-center border-2 border-green-200 system-card">
+                                    <div class="flex justify-center items-center mb-1">
+                                        <i class="fas fa-tachometer-alt text-green-600 mr-1"></i>
+                                        <h5 class="font-semibold text-green-900 text-sm">실시간 분석층</h5>
+                                    </div>
+                                    <p class="text-xs text-green-700">현재 상황 모니터링 및 즉각 대응</p>
+                                </div>
+                                <div class="bg-green-100 p-3 rounded-lg text-center border-2 border-green-200 system-card">
+                                    <div class="flex justify-center items-center mb-1">
+                                        <i class="fas fa-chart-line text-green-600 mr-1"></i>
+                                        <h5 class="font-semibold text-green-900 text-sm">예측 분석층</h5>
+                                    </div>
+                                    <p class="text-xs text-green-700">미래 상황 예측 및 선제 대응</p>
+                                </div>
+                                <div class="bg-green-100 p-3 rounded-lg text-center border-2 border-green-200 system-card">
+                                    <div class="flex justify-center items-center mb-1">
+                                        <i class="fas fa-cogs text-green-600 mr-1"></i>
+                                        <h5 class="font-semibold text-green-900 text-sm">최적화 분석층</h5>
+                                    </div>
+                                    <p class="text-xs text-green-700">자원 배치 및 운영 최적화</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Bidirectional Arrow -->
+                            <div class="flex justify-center mb-4">
+                                <div class="flex flex-col items-center">
+                                    <i class="fas fa-arrow-down text-blue-500"></i>
+                                    <i class="fas fa-arrow-up text-blue-500"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Data Integration Layer -->
+                            <div class="bg-purple-100 p-4 rounded-lg mb-4 text-center border-2 border-purple-200 system-card">
+                                <div class="flex justify-center items-center">
+                                    <i class="fas fa-database text-purple-600 mr-2"></i>
+                                    <h4 class="font-bold text-purple-900">클라우드 기반 데이터 통합 플랫폼</h4>
+                                </div>
+                                <p class="text-sm text-purple-700 mt-1">데이터 수집, 저장, 처리, 변환, API 관리, 보안</p>
+                            </div>
+                            
+                            <!-- Bidirectional Arrow -->
+                            <div class="flex justify-center mb-4">
+                                <div class="flex flex-col items-center">
+                                    <i class="fas fa-arrow-down text-blue-500"></i>
+                                    <i class="fas fa-arrow-up text-blue-500"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Data Sources Layer -->
+                            <div class="grid grid-cols-5 gap-2">
+                                <div class="bg-gray-100 p-2 rounded-lg text-center border-2 border-gray-200 system-card">
+                                    <i class="fas fa-ship text-gray-600 mb-1"></i>
+                                    <p class="text-xs font-semibold text-gray-700">선박 데이터</p>
+                                </div>
+                                <div class="bg-gray-100 p-2 rounded-lg text-center border-2 border-gray-200 system-card">
+                                    <i class="fas fa-truck-loading text-gray-600 mb-1"></i>
+                                    <p class="text-xs font-semibold text-gray-700">장비 데이터</p>
+                                </div>
+                                <div class="bg-gray-100 p-2 rounded-lg text-center border-2 border-gray-200 system-card">
+                                    <i class="fas fa-boxes text-gray-600 mb-1"></i>
+                                    <p class="text-xs font-semibold text-gray-700">화물 데이터</p>
+                                </div>
+                                <div class="bg-gray-100 p-2 rounded-lg text-center border-2 border-gray-200 system-card">
+                                    <i class="fas fa-cloud-sun-rain text-gray-600 mb-1"></i>
+                                    <p class="text-xs font-semibold text-gray-700">기상 데이터</p>
+                                </div>
+                                <div class="bg-gray-100 p-2 rounded-lg text-center border-2 border-gray-200 system-card">
+                                    <i class="fas fa-traffic-light text-gray-600 mb-1"></i>
+                                    <p class="text-xs font-semibold text-gray-700">교통 데이터</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                </div>
+                
+                <!-- Key Functions -->
+                <h3 class="text-2xl font-bold mb-6 text-center">핵심 기능 모듈</h3>
+                <div class="grid md:grid-cols-3 gap-6 mb-16">
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden feature-card">
+                        <div class="h-4 bg-gradient-to-r from-blue-500 to-blue-600"></div>
+                        <div class="p-6">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full mb-4 flex items-center justify-center">
+                                <i class="fas fa-water text-2xl text-blue-600"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-3">지능형 선박 교통 관리</h4>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <span class="font-medium">AI 기반 최적 입출항 계획</span>
+                                        <p class="text-sm text-gray-500">기상, 조류, 혼잡도, 안벽 가용성 등 종합 분석</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <span class="font-medium">선석 배정 최적화</span>
+                                        <p class="text-sm text-gray-500">선박 특성, 작업 시간, 화물 특성 고려한 배정</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <span class="font-medium">동적 교통 제어</span>
+                                        <p class="text-sm text-gray-500">실시간 선박 이동 모니터링 및 충돌 위험 감지</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden feature-card">
+                        <div class="h-4 bg-gradient-to-r from-green-500 to-green-600"></div>
+                        <div class="p-6">
+                            <div class="w-16 h-16 bg-green-100 rounded-full mb-4 flex items-center justify-center">
+                                <i class="fas fa-robot text-2xl text-green-600"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-3">지능형 장비 운영 관리</h4>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <span class="font-medium">장비 운영 최적화</span>
+                                        <p class="text-sm text-gray-500">화물량, 작업 우선순위, 에너지 효율성 고려</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <span class="font-medium">예측 유지보수 시스템</span>
+                                        <p class="text-sm text-gray-500">장비 상태 모니터링 및 AI 기반 고장 예측</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <span class="font-medium">자율 장비 통합 관제</span>
+                                        <p class="text-sm text-gray-500">자율주행 이송장비, 자동화 크레인 등 관제</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden feature-card">
+                        <div class="h-4 bg-gradient-to-r from-purple-500 to-purple-600"></div>
+                        <div class="p-6">
+                            <div class="w-16 h-16 bg-purple-100 rounded-full mb-4 flex items-center justify-center">
+                                <i class="fas fa-route text-2xl text-purple-600"></i>
+                            </div>
+                            <h4 class="text-xl font-bold mb-3">물류 프로세스 최적화</h4>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <span class="font-medium">실시간 화물 추적</span>
+                                        <p class="text-sm text-gray-500">RFID, IoT 기술 활용한 화물 위치 추적</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <span class="font-medium">수출입 프로세스 최적화</span>
+                                        <p class="text-sm text-gray-500">통관, 검역, 하역 등 과정의 단계별 최적화</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-purple-500 mt-1 mr-2"></i>
+                                    <div>
+                                        <span class="font-medium">연계 교통망 통합 관리</span>
+                                        <p class="text-sm text-gray-500">항만과 연결된 도로, 철도 등 배후 교통망 연계</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Implementation Timeline -->
+                <h3 class="text-2xl font-bold mb-6 text-center">실행 계획</h3>
+                <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                    <div class="relative">
+                        <!-- Timeline -->
+                        <div class="absolute left-8 top-0 h-full w-1 bg-blue-200"></div>
+                        
+                        <div class="relative flex items-start mb-8 timeline-item">
+                            <div class="absolute left-8 -ml-4 mt-1.5 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center timeline-dot transition-all duration-300">
+                                <span class="text-white font-bold">1</span>
+                            </div>
+                            <div class="ml-16">
+                                <div class="flex items-center space-x-2">
+                                    <h4 class="text-xl font-bold">기반 구축</h4>
+                                    <span class="text-blue-600 font-semibold">(1년)</span>
+                                </div>
+                                <div class="mt-2 grid md:grid-cols-3 gap-4">
+                                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                        <div class="flex items-center mb-2">
+                                            <div class="bg-blue-100 rounded-full w-8 h-8 flex items-center justify-center mr-2">
+                                                <i class="fas fa-sitemap text-blue-600"></i>
+                                            </div>
+                                            <span class="font-medium">시스템 분석 및 설계</span>
+                                        </div>
+                                        <p class="text-sm text-gray-600">기존 시스템 분석 및 통합 방안 설계, 이해관계자 요구사항 수집</p>
+                                    </div>
+                                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                        <div class="flex items-center mb-2">
+                                            <div class="bg-blue-100 rounded-full w-8 h-8 flex items-center justify-center mr-2">
+                                                <i class="fas fa-database text-blue-600"></i>
+                                            </div>
+                                            <span class="font-medium">데이터 표준화</span>
+                                        </div>
+                                        <p class="text-sm text-gray-600">데이터 표준화 및 통합 플랫폼 아키텍처 구축, 품질 관리 체계 수립</p>
+                                    </div>
+                                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                        <div class="flex items-center mb-2">
+                                            <div class="bg-blue-100 rounded-full w-8 h-8 flex items-center justify-center mr-2">
+                                                <i class="fas fa-server text-blue-600"></i>
+                                            </div>
+                                            <span class="font-medium">인프라 구축</span>
+                                        </div>
+                                        <p class="text-sm text-gray-600">핵심 데이터 수집 및 처리 인프라 구축, 클라우드 환경 설정</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="relative flex items-start mb-8 timeline-item">
+                            <div class="absolute left-8 -ml-4 mt-1.5 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center timeline-dot transition-all duration-300">
+                                <span class="text-white font-bold">2</span>
+                            </div>
+                            <div class="ml-16">
+                                <div class="flex items-center space-x-2">
+                                    <h4 class="text-xl font-bold">핵심 시스템 개발</h4>
+                                    <span class="text-blue-600 font-semibold">(1년)</span>
+                                </div>
+                                <div class="grid grid-cols-4 gap-2 mt-2">
+                                    <div class="bg-blue-100 rounded-lg p-3 text-center">
+                                        <i class="fas fa-laptop-code text-blue-700 mb-1"></i>
+                                        <p class="text-xs font-medium">통합 관제 플랫폼 개발</p>
+                                    </div>
+                                    <div class="bg-blue-100 rounded-lg p-3 text-center">
+                                        <i class="fas fa-brain text-blue-700 mb-1"></i>
+                                        <p class="text-xs font-medium">AI 분석 엔진 개발</p>
+                                    </div>
+                                    <div class="bg-blue-100 rounded-lg p-3 text-center">
+                                        <i class="fas fa-water text-blue-700 mb-1"></i>
+                                        <p class="text-xs font-medium">선박 교통 관리 모듈</p>
+                                    </div>
+                                    <div class="bg-blue-100 rounded-lg p-3 text-center">
+                                        <i class="fas fa-truck-loading text-blue-700 mb-1"></i>
+                                        <p class="text-xs font-medium">장비 운영 관리 모듈</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="relative flex items-start mb-8 timeline-item">
+                            <div class="absolute left-8 -ml-4 mt-1.5 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center timeline-dot transition-all duration-300">
+                                <span class="text-white font-bold">3</span>
+                            </div>
+                            <div class="ml-16">
+                                <div class="flex items-center space-x-2">
+                                    <h4 class="text-xl font-bold">확장 및 고도화</h4>
+                                    <span class="text-blue-600 font-semibold">(1년)</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-4 mt-2">
+                                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                        <p class="font-medium text-center mb-1">물류 프로세스 최적화 통합</p>
+                                        <div class="flex justify-center">
+                                            <div class="bg-blue-200 h-1 w-full max-w-xs rounded-full overflow-hidden">
+                                                <div class="bg-blue-600 h-1 rounded-full" style="width: 70%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                        <p class="font-medium text-center mb-1">유관기관 시스템 연계 확대</p>
+                                        <div class="flex justify-center">
+                                            <div class="bg-blue-200 h-1 w-full max-w-xs rounded-full overflow-hidden">
+                                                <div class="bg-blue-600 h-1 rounded-full" style="width: 60%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                        <p class="font-medium text-center mb-1">자율운영 기능 단계적 적용</p>
+                                        <div class="flex justify-center">
+                                            <div class="bg-blue-200 h-1 w-full max-w-xs rounded-full overflow-hidden">
+                                                <div class="bg-blue-600 h-1 rounded-full" style="width: 45%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="relative flex items-start timeline-item">
+                            <div class="absolute left-8 -ml-4 mt-1.5 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center timeline-dot transition-all duration-300">
+                                <span class="text-white font-bold">4</span>
+                            </div>
+                            <div class="ml-16">
+                                <div class="flex items-center space-x-2">
+                                    <h4 class="text-xl font-bold">완전 통합 및 지능화</h4>
+                                    <span class="text-blue-600 font-semibold">(1년)</span>
+                                </div>
+                                <p class="text-gray-600 mt-2">전체 시스템 통합 운영 체계 확립, 지능형 자율 의사결정 기능 고도화, 지속적 학습 및 최적화 체계 구축</p>
+                                <div class="mt-3 bg-blue-600 bg-opacity-10 rounded-lg p-4 border border-blue-200">
+                                    <div class="flex items-center mb-1">
+                                        <i class="fas fa-lightbulb text-blue-600 mr-2"></i>
+                                        <span class="font-semibold">최종 목표</span>
+                                    </div>
+                                    <p class="text-sm">세계 최고 수준의 지능형 스마트 항만 구현 및 부산항 디지털 혁신의 글로벌 표준 정립</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+ 
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="py-16 bg-gradient-to-b from-white to-blue-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-12">
+                    <h5 class="text-blue-600 font-semibold">기대효과</h5>
+                    <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-4">PORT-AI 도입 효과</h2>
+                    <p class="text-gray-600 max-w-3xl mx-auto">통합 스마트 관제 시스템을 통해 부산항은 다음과 같은 혁신적 성과를 기대할 수 있습니다.</p>
+                </div>
+                
+                <!-- Benefits Stats -->
+                <div class="grid md:grid-cols-4 gap-6 mb-12">
+                    <div class="bg-white rounded-xl shadow-md p-6 text-center stat-card">
+                        <div class="inline-block bg-blue-100 rounded-full p-4 mb-4">
+                            <i class="fas fa-tachometer-alt text-2xl text-blue-600"></i>
+                        </div>
+                        <div class="text-4xl font-bold text-blue-900 mb-2">15%</div>
+                        <div class="text-lg font-semibold mb-1">선박 대기시간 감소</div>
+                        <p class="text-sm text-gray-600">입출항 프로세스 최적화</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-md p-6 text-center stat-card">
+                        <div class="inline-block bg-green-100 rounded-full p-4 mb-4">
+                            <i class="fas fa-chart-line text-2xl text-green-600"></i>
+                        </div>
+                        <div class="text-4xl font-bold text-green-700 mb-2">20%</div>
+                        <div class="text-lg font-semibold mb-1">장비 가동률 향상</div>
+                        <p class="text-sm text-gray-600">자원 활용도 극대화</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-md p-6 text-center stat-card">
+                        <div class="inline-block bg-red-100 rounded-full p-4 mb-4">
+                            <i class="fas fa-shield-alt text-2xl text-red-600"></i>
+                        </div>
+                        <div class="text-4xl font-bold text-red-700 mb-2">25%</div>
+                        <div class="text-lg font-semibold mb-1">사고발생률 감소</div>
+                        <p class="text-sm text-gray-600">위험 조기 감지 및 대응</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-md p-6 text-center stat-card">
+                        <div class="inline-block bg-yellow-100 rounded-full p-4 mb-4">
+                            <i class="fas fa-leaf text-2xl text-yellow-600"></i>
+                        </div>
+                        <div class="text-4xl font-bold text-yellow-700 mb-2">15%</div>
+                        <div class="text-lg font-semibold mb-1">에너지 소비 절감</div>
+                        <p class="text-sm text-gray-600">10만톤 CO2 배출 감축</p>
+                    </div>
+                </div>
+                
+                <!-- Benefits Details -->
+                <div class="grid md:grid-cols-2 gap-8 mb-16">
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="h-2 bg-blue-600"></div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-4 flex items-center">
+                                <i class="fas fa-industry text-blue-600 mr-2"></i>항만 경쟁력 강화
+                            </h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <div class="bg-blue-100 rounded-full w-5 h-5 flex items-center justify-center text-xs text-blue-700 font-bold mt-0.5 mr-2 flex-shrink-0">1</div>
+                                    <div>
+                                        <p class="font-medium">처리 능력 향상</p>
+                                        <p class="text-sm text-gray-600">동일 인프라로 화물 처리량 15% 증가, 선박 회전율 개선으로 추가 입항 유치</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="bg-blue-100 rounded-full w-5 h-5 flex items-center justify-center text-xs text-blue-700 font-bold mt-0.5 mr-2 flex-shrink-0">2</div>
+                                    <div>
+                                        <p class="font-medium">비용 절감</p>
+                                        <p class="text-sm text-gray-600">연간 약 500억원 운영비용 절감, 불필요한 장비 이동 25% 감소</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="bg-blue-100 rounded-full w-5 h-5 flex items-center justify-center text-xs text-blue-700 font-bold mt-0.5 mr-2 flex-shrink-0">3</div>
+                                    <div>
+                                        <p class="font-medium">서비스 품질 향상</p>
+                                        <p class="text-sm text-gray-600">화물 이동시간 25% 단축, 항만 혼잡도 30% 감소, 예측 가능성 향상</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="h-2 bg-green-600"></div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold mb-4 flex items-center">
+                                <i class="fas fa-users text-green-600 mr-2"></i>사회적 파급효과
+                            </h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <div class="bg-green-100 rounded-full w-5 h-5 flex items-center justify-center text-xs text-green-700 font-bold mt-0.5 mr-2 flex-shrink-0">1</div>
+                                    <div>
+                                        <p class="font-medium">일자리 창출 및 질적 전환</p>
+                                        <p class="text-sm text-gray-600">항만 디지털 기술 관련 신규 일자리 500개 이상 창출, 기존 인력의 고부가가치 업무 전환</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="bg-green-100 rounded-full w-5 h-5 flex items-center justify-center text-xs text-green-700 font-bold mt-0.5 mr-2 flex-shrink-0">2</div>
+                                    <div>
+                                        <p class="font-medium">지역경제 활성화</p>
+                                        <p class="text-sm text-gray-600">항만 효율성 향상에 따른 물동량 증가로 지역경제 활성화, 관련 산업 및 서비스업 성장 견인</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="bg-green-100 rounded-full w-5 h-5 flex items-center justify-center text-xs text-green-700 font-bold mt-0.5 mr-2 flex-shrink-0">3</div>
+                                    <div>
+                                        <p class="font-medium">국제적 위상 강화</p>
+                                        <p class="text-sm text-gray-600">세계 5대 컨테이너 항만으로서의 부산항 위상 강화, 스마트 항만 혁신 모델로서 국제적 벤치마킹 대상화</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Comparison Chart -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+                    <div class="p-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+                        <h3 class="text-xl font-bold">PORT-AI 도입 전후 비교</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">평가항목</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">도입 전</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">도입 후</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">개선율</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap font-medium">선박 대기시간</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">평균 12.3시간</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-green-600 font-medium">평균 10.5시간</td>
+                                        <td class="px-6 py-4 whitespace-nowrap"><span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">▼15%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap font-medium">장비 가동률</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">65%</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-green-600 font-medium">78%</td>
+                                        <td class="px-6 py-4 whitespace-nowrap"><span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">▲20%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap font-medium">화물 처리시간</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">컨테이너당 3.2분</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-green-600 font-medium">컨테이너당 2.4분</td>
+                                        <td class="px-6 py-4 whitespace-nowrap"><span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">▼25%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap font-medium">항만 사고 발생률</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">연간 15건</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-green-600 font-medium">연간 11건</td>
+                                        <td class="px-6 py-4 whitespace-nowrap"><span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">▼27%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap font-medium">에너지 소비량</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">기준치 100%</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-green-600 font-medium">기준치 85%</td>
+                                        <td class="px-6 py-4 whitespace-nowrap"><span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">▼15%</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-gradient-to-r from-blue-900 to-blue-700 text-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">함께 만들어가는 스마트 항만의 미래</h2>
+                <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">PORT-AI 시스템을 통해 글로벌 선도 스마트 항만으로서 부산항의 새로운 도약을 함께 이뤄내겠습니다.</p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="details.html" class="bg-white text-blue-900 px-8 py-4 rounded-lg font-semibold hover:bg-blue-100 transition flex items-center justify-center">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        <span>제안 상세내용</span>
+                    </a>
+                    <a href="https://notebooklm.google.com/notebook/62882497-f644-4c74-8308-9dbc96364970/audio" class="bg-transparent border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-900 transition flex items-center justify-center">
+                        <i class="fas fa-download mr-2"></i>
+                        <span>음성으로 듣기</span>
+                    </a>
+                    <a href="port-ai-demo-screens.html" class="bg-blue-500 border-2 border-blue-500 px-8 py-4 rounded-lg font-semibold hover:bg-blue-600 hover:border-blue-600 text-white transition flex items-center justify-center">
+                        <i class="fas fa-desktop mr-2"></i>
+                        <span>데모 화면 보기</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <div class="flex items-center">
+                        <i class="fas fa-ship text-xl mr-2"></i>
+                        <p class="text-lg font-semibold">2025 항만혁신 국민제안 공모전</p>
+                    </div>
+                    <p class="text-sm text-gray-400 mt-1">부산항만공사 주최</p>
+                </div>
+                <div class="flex flex-col items-end">
+                    <p class="text-sm mb-1">제안자: 박용환</p>
+                    <p class="text-sm text-gray-400">연락처: 010-7939-3123 | 이메일: sanoramyun8@gmail.com</p>
                 </div>
             </div>
         </div>
     </footer>
 
-    <script src="./assets/js/main.js"></script>
+    <script>
+        // Add animations and interactivity if needed
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add scroll reveal animations for cards
+            const cards = document.querySelectorAll('.feature-card, .stat-card, .timeline-item');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        window.scrollTo({
+                            top: target.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Header scroll effect
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('header');
+                if (window.scrollY > 50) {
+                    header.classList.add('py-2');
+                    header.classList.remove('py-3');
+                    header.classList.add('shadow-md');
+                } else {
+                    header.classList.remove('py-2');
+                    header.classList.add('py-3');
+                    header.classList.remove('shadow-md');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
