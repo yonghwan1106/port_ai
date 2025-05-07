@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>키워드 트렌드 분석 - PORT-AI 제안서</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%232563eb' fill-opacity='0.05'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .hexagon-bg {
+            background-color: #f0f9ff;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%233b82f6' fill-opacity='0.05' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .wave-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+        }
+
+        .wave-top svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 70px;
+        }
+
+        .wave-top .shape-fill {
+            fill: #1E40AF;
+        }
+        
+        .wave-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+
+        .wave-bottom svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 70px;
+        }
+
+        .wave-bottom .shape-fill {
+            fill: #1E40AF;
+        }
+        
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .7;
+            }
+        }
+        
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 8px 10px -6px rgba(59, 130, 246, 0.1);
+        }
+        
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .timeline-item {
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-item:hover .timeline-dot {
+            transform: scale(1.2);
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
+        }
+        
+        .system-card {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .system-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(219, 234, 254, 0.3) 0%, rgba(191, 219, 254, 0) 50%);
+            z-index: -1;
+        }
+        
+        .border-glow:hover {
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
+        }
+
+        .trend-up {
+            color: #10b981;
+        }
+
+        .trend-down {
+            color: #ef4444;
+        }
+
+        .trend-stable {
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body class="bg-pattern">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-ship text-2xl"></i>
+                <span class="font-bold text-xl md:text-2xl">PORT-AI 제안서</span>
+            </div>
+               <nav>
+                    <ul class="flex space-x-6">
+                        <li><a href="trend-report.html" class="hover:text-blue-200 font-bold">트렌드 분석</a></li>
+                        <li><a href="index.html" class="hover:text-blue-200">제안 개요</a></li>
+                        <li><a href="background.html" class="hover:text-blue-200">추진배경</a></li>
+                        <li><a href="details.html" class="hover:text-blue-200">세부내용</a></li>
+                        <li><a href="benefits.html" class="hover:text-blue-200">기대효과</a></li>
+                        <li><a href="demo.html" class="text-red-300 hover:underline">데모 화면</a></li>
+                    </ul>
+                </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative py-20 bg-gradient-to-r from-blue-900 to-blue-700 text-white overflow-hidden">
+        <div class="absolute inset-0">
+            <div class="absolute inset-0" style="background-image: url('https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1920'); background-size: cover; background-position: center; opacity: 0.3;"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-900 to-blue-700 opacity-80"></div>
+        </div>
+        
+        <!-- Animated Wave Bottom -->
+        <div class="wave-bottom">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
+            </svg>
+        </div>
+        
+        <div class="container mx-auto px-4 relative">
+            <div class="max-w-3xl">
+                <div class="inline-block bg-blue-800 bg-opacity-70 rounded-lg px-3 py-1 text-sm font-semibold mb-4">
+                    2025 항만혁신 국민제안 공모전
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">키워드 트렌드 분석 보고서</h1>
+                <div class="flex items-center space-x-2 mb-6">
+                    <span class="bg-blue-600 rounded-full w-2 h-2 pulse"></span>
+                    <p class="text-lg">항만혁신 공모 주제별 온라인 관심도 및 트렌드 분석</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-xs text-white text-opacity-50 absolute bottom-2 right-4">
+            이미지 출처: Pexels
+        </div>
+    </section>
+
+    <!-- 페이지 내비게이션 -->
+    <section class="bg-white shadow-md sticky top-0 z-20">
+        <div class="container mx-auto px-4">
+            <div class="flex overflow-x-auto whitespace-nowrap py-3 scrollbar-hide">
+                <a href="#analysis-overview" class="px-4 py-2 mr-2 rounded-md hover:bg-blue-50 font-medium">분석 개요</a>
+                <a href="#analysis-results" class="px-4 py-2 mr-2 rounded-md hover:bg-blue-50 font-medium">주요 분석 결과</a>
+                <a href="#proposal-ideas" class="px-4 py-2 mr-2 rounded-md hover:bg-blue-50 font-medium">제안 아이디어 방향</a>
+                <a href="#proposal-strategy" class="px-4 py-2 mr-2 rounded-md hover:bg-blue-50 font-medium">제안 전략</a>
+                <a href="#conclusion" class="px-4 py-2 rounded-md hover:bg-blue-50 font-medium">결론 및 제언</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 분석 개요 -->
+    <section id="analysis-overview" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl font-bold mb-12 text-blue-900">1. 분석 개요</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-blue-600 feature-card">
+                        <div class="bg-blue-100 inline-block rounded-full p-3 mb-4">
+                            <i class="fas fa-bullseye text-xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-blue-900 mb-4">1.1 분석 목적</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>부산항만공사 2025 항만혁신 국민제안 공모전의 3가지 공모 주제(디지털 혁신, 안전재난대응 혁신, 사회공헌 혁신)에 대한 온라인 관심도 파악</li>
+                            <li>각 주제별 관련 키워드의 검색 트렌드 분석을 통한 유망 아이디어 방향 도출</li>
+                            <li>공모전 참여를 위한 전략적 제안 개발</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-blue-600 feature-card">
+                        <div class="bg-blue-100 inline-block rounded-full p-3 mb-4">
+                            <i class="fas fa-database text-xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-blue-900 mb-4">1.2 데이터 수집 방법</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li><strong>데이터 소스</strong>: 네이버 데이터랩 검색어 트렌드 API</li>
+                            <li><strong>조사 기간</strong>: 2023년 4월 1일 ~ 2025년 4월 1일 (최근 2년간)</li>
+                            <li><strong>분석 단위</strong>: 월별 검색량 추이</li>
+                            <li><strong>키워드 그룹</strong>:
+                                <ul class="pl-4 mt-1 space-y-1">
+                                    <li>디지털 혁신: "항만", "스마트", "AI", "자동화", "로봇"</li>
+                                    <li>안전재난대응: "항만안전", "재난", "해양", "사고", "대응"</li>
+                                    <li>사회공헌 혁신: "친환경", "탄소", "지역", "상생", "ESG"</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-blue-600 feature-card">
+                        <div class="bg-blue-100 inline-block rounded-full p-3 mb-4">
+                            <i class="fas fa-chart-bar text-xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-blue-900 mb-4">1.3 분석 방법</h3>
+                        <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                            <li>키워드별 상대적 검색 빈도 추이 분석</li>
+                            <li>키워드 그룹 간 상대적 관심도 비교</li>
+                            <li>시기별 변동 패턴 및 이벤트 영향 분석</li>
+                            <li>상승세 키워드 파악을 통한 트렌드 예측</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 주요 분석 결과 -->
+    <section id="analysis-results" class="py-16 hexagon-bg">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl font-bold mb-12 text-blue-900">2. 주요 분석 결과</h2>
+                
+                <!-- 분야별 관심도 비교 -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-10 border-glow">
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-4 text-white">
+                        <h3 class="text-xl font-bold">2.1 분야별 관심도 비교</h3>
+                    </div>
+                    <div class="p-8">
+                        <p class="mb-8 text-gray-700">전체 기간 동안 검색 트렌드 분석 결과, 3개 분야 중 <strong class="text-blue-700">디지털 혁신</strong> 관련 키워드가 가장 높은 관심을 받고 있으며, 그 다음으로 <strong class="text-green-700">사회공헌 혁신</strong>, <strong class="text-red-700">안전재난대응 혁신</strong> 순으로 나타났습니다.</p>
+                        
+                        <h4 class="text-lg font-semibold text-blue-900 mb-4">분야별 상대적 관심도 (2025년 4월 기준)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div class="bg-blue-50 p-6 rounded-lg shadow-md stat-card">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-blue-700 font-bold text-4xl">89.31</div>
+                                    <div class="bg-blue-100 rounded-full p-3">
+                                        <i class="fas fa-microchip text-xl text-blue-600"></i>
+                                    </div>
+                                </div>
+                                <p class="text-gray-700 font-medium mt-2">디지털 혁신</p>
+                                <div class="flex items-center text-sm mt-2 trend-up">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    <span>지속적 상승 추세</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-green-50 p-6 rounded-lg shadow-md stat-card">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-green-700 font-bold text-4xl">40.89</div>
+                                    <div class="bg-green-100 rounded-full p-3">
+                                        <i class="fas fa-leaf text-xl text-green-600"></i>
+                                    </div>
+                                </div>
+                                <p class="text-gray-700 font-medium mt-2">사회공헌 혁신</p>
+                                <div class="flex items-center text-sm mt-2 trend-down">
+                                    <i class="fas fa-arrow-down mr-1"></i>
+                                    <span>하락 추세에서 최근 반등</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-red-50 p-6 rounded-lg shadow-md stat-card">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-red-700 font-bold text-4xl">23.58</div>
+                                    <div class="bg-red-100 rounded-full p-3">
+                                        <i class="fas fa-shield-alt text-xl text-red-600"></i>
+                                    </div>
+                                </div>
+                                <p class="text-gray-700 font-medium mt-2">안전재난대응 혁신</p>
+                                <div class="flex items-center text-sm mt-2 trend-stable">
+                                    <i class="fas fa-equals mr-1"></i>
+                                    <span>이벤트 발생 시 급상승</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full h-128 bg-gray-50 rounded-lg p-4">
+                            <canvas id="interestChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 디지털 혁신 분야 트렌드 -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-10 border-glow">
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-4 text-white">
+                        <h3 class="text-xl font-bold">2.2 디지털 혁신 분야 트렌드</h3>
+                    </div>
+                    <div class="p-8">
+                        <p class="mb-4 text-gray-700">디지털 혁신 분야에서는 <strong>"AI"</strong>가 압도적인 검색 관심을 받고 있으며, 최근 2년간 지속적인 관심 증가 추세를 보이고 있습니다.</p>
+                        
+                        <h4 class="text-lg font-semibold text-blue-900 mb-4">주요 키워드 검색 비율 (2025년 4월 기준)</h4>
+                        <div class="overflow-x-auto mb-6">
+                            <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                                <thead class="bg-blue-50">
+                                    <tr>
+                                        <th class="py-3 px-4 border-b text-left">순위</th>
+                                        <th class="py-3 px-4 border-b text-left">키워드</th>
+                                        <th class="py-3 px-4 border-b text-left">검색 비율</th>
+                                        <th class="py-3 px-4 border-b text-left">트렌드</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover:bg-blue-50">
+                                        <td class="py-3 px-4 border-b font-medium">1</td>
+                                        <td class="py-3 px-4 border-b">AI</td>
+                                        <td class="py-3 px-4 border-b font-bold">98.85</td>
+                                        <td class="py-3 px-4 border-b trend-up"><i class="fas fa-arrow-up mr-1"></i> 상승</td>
+                                    </tr>
+                                    <tr class="hover:bg-blue-50">
+                                        <td class="py-3 px-4 border-b font-medium">2</td>
+                                        <td class="py-3 px-4 border-b">로봇</td>
+                                        <td class="py-3 px-4 border-b font-bold">16.76</td>
+                                        <td class="py-3 px-4 border-b trend-stable"><i class="fas fa-equals mr-1"></i> 안정</td>
+                                    </tr>
+                                    <tr class="hover:bg-blue-50">
+                                        <td class="py-3 px-4 border-b font-medium">3</td>
+                                        <td class="py-3 px-4 border-b">스마트</td>
+                                        <td class="py-3 px-4 border-b font-bold">9.03</td>
+                                        <td class="py-3 px-4 border-b trend-stable"><i class="fas fa-equals mr-1"></i> 안정</td>
+                                    </tr>
+                                    <tr class="hover:bg-blue-50">
+                                        <td class="py-3 px-4 border-b font-medium">4</td>
+                                        <td class="py-3 px-4 border-b">항만</td>
+                                        <td class="py-3 px-4 border-b font-bold">2.42</td>
+                                        <td class="py-3 px-4 border-b trend-down"><i class="fas fa-arrow-down mr-1"></i> 하락</td>
+                                    </tr>
+                                    <tr class="hover:bg-blue-50">
+                                        <td class="py-3 px-4 border-b font-medium">5</td>
+                                        <td class="py-3 px-4 border-b">자동화</td>
+                                        <td class="py-3 px-4 border-b font-bold">1.08</td>
+                                        <td class="py-3 px-4 border-b trend-down"><i class="fas fa-arrow-down mr-1"></i> 하락</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <h4 class="text-lg font-semibold text-blue-900 mb-4">주요 트렌드</h4>
+                        <ul class="list-disc pl-6 space-y-2 text-gray-700">
+                            <li><strong>AI 관련 검색</strong>: 2024년 3월 최고점(100.00) 도달 후 2024년 하반기 다소 하락했으나, 2025년 초부터 다시 상승세로 전환</li>
+                            <li><strong>로봇 관련 검색</strong>: 2023년 대비 하락세였으나 2024년 5월 일시적 상승(26.18)</li>
+                            <li><strong>스마트 기술</strong>: 2024년 4월 일시적 상승(18.25) 후 안정적 추세 유지</li>
+                            <li>전체적으로 AI, 로봇 기술에 대한 관심이 높게 유지되는 추세</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 안전재난대응 혁신 분야 트렌드 -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-10 border-glow">
+                    <div class="bg-gradient-to-r from-red-600 to-red-800 p-4 text-white">
+                        <h3 class="text-xl font-bold">2.3 안전재난대응 혁신 분야 트렌드</h3>
+                    </div>
+                    <div class="p-8">
+                        <p class="mb-4 text-gray-700">안전재난대응 분야에서는 <strong>"사고"</strong> 키워드가 가장 높은 검색량을 보이며, 특히 2024년 7월에 급격한 상승(100.00)을 기록했습니다.</p>
+                        
+                        <h4 class="text-lg font-semibold text-red-900 mb-4">주요 키워드 검색 비율 (2025년 4월 기준)</h4>
+                        <div class="overflow-x-auto mb-6">
+                            <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                                <thead class="bg-red-50">
+                                    <tr>
+                                        <th class="py-3 px-4 border-b text-left">순위</th>
+                                        <th class="py-3 px-4 border-b text-left">키워드</th>
+                                        <th class="py-3 px-4 border-b text-left">검색 비율</th>
+                                        <th class="py-3 px-4 border-b text-left">트렌드</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover:bg-red-50">
+                                        <td class="py-3 px-4 border-b font-medium">1</td>
+                                        <td class="py-3 px-4 border-b">사고</td>
+                                        <td class="py-3 px-4 border-b font-bold">29.99</td>
+                                        <td class="py-3 px-4 border-b trend-stable"><i class="fas fa-equals mr-1"></i> 변동성 큼</td>
+                                    </tr>
+                                    <tr class="hover:bg-red-50">
+                                        <td class="py-3 px-4 border-b font-medium">2</td>
+                                        <td class="py-3 px-4 border-b">대응</td>
+                                        <td class="py-3 px-4 border-b font-bold">10.49</td>
+                                        <td class="py-3 px-4 border-b trend-stable"><i class="fas fa-equals mr-1"></i> 안정</td>
+                                    </tr>
+                                    <tr class="hover:bg-red-50">
+                                        <td class="py-3 px-4 border-b font-medium">3</td>
+                                        <td class="py-3 px-4 border-b">재난</td>
+                                        <td class="py-3 px-4 border-b font-bold">9.32</td>
+                                        <td class="py-3 px-4 border-b trend-up"><i class="fas fa-arrow-up mr-1"></i> 최근 상승</td>
+                                    </tr>
+                                    <tr class="hover:bg-red-50">
+                                        <td class="py-3 px-4 border-b font-medium">4</td>
+                                        <td class="py-3 px-4 border-b">해양</td>
+                                        <td class="py-3 px-4 border-b font-bold">3.11</td>
+                                        <td class="py-3 px-4 border-b trend-down"><i class="fas fa-arrow-down mr-1"></i> 하락</td>
+                                    </tr>
+                                    <tr class="hover:bg-red-50">
+                                        <td class="py-3 px-4 border-b font-medium">5</td>
+                                        <td class="py-3 px-4 border-b">항만안전</td>
+                                        <td class="py-3 px-4 border-b font-bold">0.05</td>
+                                        <td class="py-3 px-4 border-b trend-down"><i class="fas fa-arrow-down mr-1"></i> 하락</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <h4 class="text-lg font-semibold text-red-900 mb-4">주요 트렌드</h4>
+                        <ul class="list-disc pl-6 space-y-2 text-gray-700">
+                            <li><strong>사고 관련 검색</strong>: 2024년 7월 급상승(100.00) 및 2024년 12월 높은 검색량(66.42) 기록</li>
+                            <li><strong>재난 관련 검색</strong>: 2023년 5월(60.28) 및 2025년 3월(22.69)에 검색 피크</li>
+                            <li><strong>해양 및 항만안전</strong>: 전반적으로 낮은 검색량이나 계절적 변동 패턴 존재</li>
+                            <li>안전사고 발생 시기와 연관된 검색량 증가 패턴이 뚜렷함</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 사회공헌 혁신 분야 트렌드 -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-10 border-glow">
+                    <div class="bg-gradient-to-r from-green-600 to-green-800 p-4 text-white">
+                        <h3 class="text-xl font-bold">2.4 사회공헌 혁신 분야 트렌드</h3>
+                    </div>
+                    <div class="p-8">
+                        <p class="mb-4 text-gray-700">사회공헌 분야에서는 <strong>"ESG"</strong>가 가장 높은 검색 관심을 받고 있으나, 최근 하락세가 뚜렷합니다.</p>
+                        
+                        <h4 class="text-lg font-semibold text-green-900 mb-4">주요 키워드 검색 비율 (2025년 4월 기준)</h4>
+                        <div class="overflow-x-auto mb-6">
+                            <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                                <thead class="bg-green-50">
+                                    <tr>
+                                        <th class="py-3 px-4 border-b text-left">순위</th>
+                                        <th class="py-3 px-4 border-b text-left">키워드</th>
+                                        <th class="py-3 px-4 border-b text-left">검색 비율</th>
+                                        <th class="py-3 px-4 border-b text-left">트렌드</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover:bg-green-50">
+                                        <td class="py-3 px-4 border-b font-medium">1</td>
+                                        <td class="py-3 px-4 border-b">ESG</td>
+                                        <td class="py-3 px-4 border-b font-bold">46.10</td>
+                                        <td class="py-3 px-4 border-b trend-down"><i class="fas fa-arrow-down mr-1"></i> 하락</td>
+                                    </tr>
+                                    <tr class="hover:bg-green-50">
+                                        <td class="py-3 px-4 border-b font-medium">2</td>
+                                        <td class="py-3 px-4 border-b">탄소</td>
+                                        <td class="py-3 px-4 border-b font-bold">16.22</td>
+                                        <td class="py-3 px-4 border-b trend-up"><i class="fas fa-arrow-up mr-1"></i> 상승</td>
+                                    </tr>
+                                    <tr class="hover:bg-green-50">
+                                        <td class="py-3 px-4 border-b font-medium">3</td>
+                                        <td class="py-3 px-4 border-b">상생</td>
+                                        <td class="py-3 px-4 border-b font-bold">10.63</td>
+                                        <td class="py-3 px-4 border-b trend-stable"><i class="fas fa-equals mr-1"></i> 안정</td>
+                                    </tr>
+                                    <tr class="hover:bg-green-50">
+                                        <td class="py-3 px-4 border-b font-medium">4</td>
+                                        <td class="py-3 px-4 border-b">지역</td>
+                                        <td class="py-3 px-4 border-b font-bold">8.27</td>
+                                        <td class="py-3 px-4 border-b trend-down"><i class="fas fa-arrow-down mr-1"></i> 하락</td>
+                                    </tr>
+                                    <tr class="hover:bg-green-50">
+                                        <td class="py-3 px-4 border-b font-medium">5</td>
+                                        <td class="py-3 px-4 border-b">친환경</td>
+                                        <td class="py-3 px-4 border-b font-bold">8.12</td>
+                                        <td class="py-3 px-4 border-b trend-up"><i class="fas fa-arrow-up mr-1"></i> 반등</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <h4 class="text-lg font-semibold text-green-900 mb-4">주요 트렌드</h4>
+                        <ul class="list-disc pl-6 space-y-2 text-gray-700">
+                            <li><strong>ESG 검색</strong>: 2023년 5월 최고점(100.00) 기록 후 전반적 하락세, 2024년 상반기에 일시적 반등</li>
+                            <li><strong>탄소 관련 검색</strong>: 2023년 대비 하락했으나 2025년 초부터 상승 추세(16.22)</li>
+                            <li><strong>친환경</strong>: 2023년 대비 하락세이나 최근 소폭 반등</li>
+                            <li>ESG 관심도는 하락 중이나, 탄소/친환경 관련 관심은 증가 추세로 전환 중</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 계절적 변동 및 주요 이벤트 영향 -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-10 border-glow">
+                    <div class="bg-gradient-to-r from-purple-600 to-purple-800 p-4 text-white">
+                        <h3 class="text-xl font-bold">2.5 계절적 변동 및 주요 이벤트 영향</h3>
+                    </div>
+                    <div class="p-8">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-blue-50 p-5 rounded-lg shadow-sm">
+                                <div class="flex items-center mb-2">
+                                    <div class="bg-blue-100 rounded-full p-2 mr-2">
+                                        <i class="fas fa-microchip text-blue-600"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-blue-900">디지털 혁신</h4>
+                                </div>
+                                <p class="text-gray-700">연초(1-3월) 및 상반기(4-5월)에 검색량 증가 패턴</p>
+                            </div>
+                            
+                            <div class="bg-red-50 p-5 rounded-lg shadow-sm">
+                                <div class="flex items-center mb-2">
+                                    <div class="bg-red-100 rounded-full p-2 mr-2">
+                                        <i class="fas fa-shield-alt text-red-600"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-red-900">안전재난대응</h4>
+                                </div>
+                                <p class="text-gray-700">여름철(7월) 및 겨울철(12월)에 사고 관련 검색 증가</p>
+                            </div>
+                            
+                            <div class="bg-green-50 p-5 rounded-lg shadow-sm">
+                                <div class="flex items-center mb-2">
+                                    <div class="bg-green-100 rounded-full p-2 mr-2">
+                                        <i class="fas fa-leaf text-green-600"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-green-900">사회공헌</h4>
+                                </div>
+                                <p class="text-gray-700">연초 및 봄철(3-5월)에 ESG, 탄소 관련 검색 증가</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 공모전 제안 아이디어 방향 -->
+    <section id="proposal-ideas" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl font-bold mb-12 text-blue-900">3. 공모전 제안 아이디어 방향</h2>
+                
+                <!-- 디지털 혁신 분야 제안 방향 -->
+                <div class="bg-blue-50 p-8 rounded-2xl shadow-xl mb-12">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center mr-4">
+                            <i class="fas fa-microchip text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-blue-900">3.1 디지털 혁신 분야 제안 방향</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md feature-card">
+                            <div class="bg-blue-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                                <i class="fas fa-brain text-blue-600"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-blue-900 mb-2">AI 기반 항만 운영 최적화 시스템</h4>
+                            <p class="text-sm text-gray-500 mb-3">검색 트렌드: AI(98.85), 자동화(1.08)</p>
+                            <p class="text-gray-700 mb-3">항만 내 화물 처리, 선박 입출항, 장비 배치 등을 AI 알고리즘으로 통합 최적화하는 시스템</p>
+                            <p class="text-sm font-medium text-blue-700">기대효과: 항만 운영 효율성 증대, 대기시간 감소, 비용 절감</p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-md feature-card">
+                            <div class="bg-blue-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                                <i class="fas fa-robot text-blue-600"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-blue-900 mb-2">로봇 기반 항만 안전 모니터링 솔루션</h4>
+                            <p class="text-sm text-gray-500 mb-3">검색 트렌드: 로봇(16.76), AI(98.85), 항만(2.42)</p>
+                            <p class="text-gray-700 mb-3">자율주행 로봇과 AI 비전 기술을 활용한 항만 시설 안전 모니터링 시스템</p>
+                            <p class="text-sm font-medium text-blue-700">기대효과: 위험지역 상시 감시, 이상징후 조기 발견, 사고 예방</p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-md feature-card">
+                            <div class="bg-blue-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                                <i class="fas fa-cubes text-blue-600"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-blue-900 mb-2">스마트 항만 디지털 트윈 구축</h4>
+                            <p class="text-sm text-gray-500 mb-3">검색 트렌드: 스마트(9.03), 자동화(1.08)</p>
+                            <p class="text-gray-700 mb-3">부산항 전체를 디지털 트윈으로 구현하여 실시간 모니터링 및 시뮬레이션 가능한 플랫폼 구축</p>
+                            <p class="text-sm font-medium text-blue-700">기대효과: 항만 운영 가시성 확보, 최적 의사결정 지원, 미래 시나리오 예측</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 안전재난대응 혁신 분야 제안 방향 -->
+                <div class="bg-red-50 p-8 rounded-2xl shadow-xl mb-12">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-red-600 text-white rounded-full w-12 h-12 flex items-center justify-center mr-4">
+                            <i class="fas fa-shield-alt text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-red-900">3.2 안전재난대응 혁신 분야 제안 방향</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md feature-card">
+                            <div class="bg-red-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                                <i class="fas fa-chart-line text-red-600"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-red-900 mb-2">해양사고 예측 및 신속대응 시스템</h4>
+                            <p class="text-sm text-gray-500 mb-3">검색 트렌드: 사고(29.99), 대응(10.49), 해양(3.11)</p>
+                            <p class="text-gray-700 mb-3">기상정보, 선박 동향, 과거 사고 데이터 등을 통합 분석하여 사고 위험도를 예측하고 신속 대응하는 시스템</p>
+                            <p class="text-sm font-medium text-red-700">기대효과: 해양사고 예방, 대응시간 단축, 인명 피해 최소화</p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-md feature-card">
+                            <div class="bg-red-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                                <i class="fas fa-building text-red-600"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-red-900 mb-2">재난 대비 항만 인프라 강화 방안</h4>
+                            <p class="text-sm text-gray-500 mb-3">검색 트렌드: 재난(9.32), 항만안전(0.05)</p>
+                            <p class="text-gray-700 mb-3">기후변화로 인한 해수면 상승, 태풍 등 자연재해에 대비한 항만 인프라 강화 방안</p>
+                            <p class="text-sm font-medium text-red-700">기대효과: 재난 시 항만 기능 유지, 복구 시간 단축, 경제적 손실 최소화</p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-md feature-card">
+                            <div class="bg-red-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                                <i class="fas fa-users text-red-600"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-red-900 mb-2">항만 안전문화 조성 프로그램</h4>
+                            <p class="text-sm text-gray-500 mb-3">검색 트렌드: 항만안전(0.05), 대응(10.49)</p>
+                            <p class="text-gray-700 mb-3">항만 근로자 및 관계자를 위한 안전 교육, 캠페인, 인센티브 제도 등 통합 안전문화 조성 프로그램</p>
+                            <p class="text-sm font-medium text-red-700">기대효과: 안전의식 향상, 인적 오류로 인한 사고 감소, 자발적 안전관리 문화 정착</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 사회공헌 혁신 분야 제안 방향 -->
+                <div class="bg-green-50 p-8 rounded-2xl shadow-xl mb-12">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-green-600 text-white rounded-full w-12 h-12 flex items-center justify-center mr-4">
+                            <i class="fas fa-leaf text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-green-900">3.3 사회공헌 혁신 분야 제안 방향</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-white p-6 rounded-lg shadow-md feature-card">
+                            <div class="bg-green-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                                <i class="fas fa-leaf text-green-600"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-green-900 mb-2">항만 탄소중립 로드맵 및 실행 프로그램</h4>
+                            <p class="text-sm text-gray-500 mb-3">검색 트렌드: 탄소(16.22), ESG(46.10), 친환경(8.12)</p>
+                            <p class="text-gray-700 mb-3">항만 운영 과정에서 발생하는 탄소배출 저감을 위한 단계별 실행 프로그램 및 측정 시스템</p>
+                            <p class="text-sm font-medium text-green-700">기대효과: 친환경 항만 이미지 구축, 국제 환경규제 선제적 대응, 운영 비용 절감</p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-md feature-card">
+                            <div class="bg-green-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                                <i class="fas fa-handshake text-green-600"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-green-900 mb-2">지역사회-항만 상생 협력 플랫폼</h4>
+                            <p class="text-sm text-gray-500 mb-3">검색 트렌드: 상생(10.63), 지역(8.27)</p>
+                            <p class="text-gray-700 mb-3">항만과 인근 지역사회가 상호 이익을 창출할 수 있는 협력 사업 발굴 및 지원 플랫폼</p>
+                            <p class="text-sm font-medium text-green-700">기대효과: 지역경제 활성화, 항만에 대한 인식 개선, 사회적 가치 창출</p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-lg shadow-md feature-card">
+                            <div class="bg-green-100 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                                <i class="fas fa-water text-green-600"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-green-900 mb-2">해양 생태계 보존 및 복원 프로젝트</h4>
+                            <p class="text-sm text-gray-500 mb-3">검색 트렌드: 친환경(8.12), ESG(46.10)</p>
+                            <p class="text-gray-700 mb-3">항만 운영으로 인한 해양 생태계 영향을 최소화하고 훼손된 생태계를 복원하는 종합 프로젝트</p>
+                            <p class="text-sm font-medium text-green-700">기대효과: 생물다양성 보존, 환경적 지속가능성 확보, ESG 평가 향상</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 공모전 제안 전략 -->
+    <section id="proposal-strategy" class="py-16 hexagon-bg">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl font-bold mb-12 text-blue-900">4. 공모전 제안 전략</h2>
+                
+                <!-- 분야별 제안 전략 -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-10 border-glow">
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-4 text-white">
+                        <h3 class="text-xl font-bold">4.1 분야별 제안 전략</h3>
+                    </div>
+                    <div class="p-8">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-blue-50 p-6 rounded-lg shadow-sm">
+                                <div class="flex items-center mb-3">
+                                    <div class="bg-blue-100 rounded-full p-2 mr-2">
+                                        <i class="fas fa-microchip text-blue-600"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-blue-900">디지털 혁신 분야</h4>
+                                </div>
+                                <ul class="list-disc pl-5 space-y-2 text-gray-700 text-sm">
+                                    <li>AI, 로봇 기술을 핵심 키워드로 활용</li>
+                                    <li>실제 적용 가능한 구체적 솔루션 제시</li>
+                                    <li>비용 절감 및 효율성 증대 효과를 정량적으로 제시</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-red-50 p-6 rounded-lg shadow-sm">
+                                <div class="flex items-center mb-3">
+                                    <div class="bg-red-100 rounded-full p-2 mr-2">
+                                        <i class="fas fa-shield-alt text-red-600"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-red-900">안전재난대응 분야</h4>
+                                </div>
+                                <ul class="list-disc pl-5 space-y-2 text-gray-700 text-sm">
+                                    <li>최근 발생한 해양/항만 사고 사례를 참고하여 현실적 문제해결 방안 제시</li>
+                                    <li>예방-대비-대응-복구의 전주기적 접근법 강조</li>
+                                    <li>안전과 경제성의 균형 강조</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-green-50 p-6 rounded-lg shadow-sm">
+                                <div class="flex items-center mb-3">
+                                    <div class="bg-green-100 rounded-full p-2 mr-2">
+                                        <i class="fas fa-leaf text-green-600"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-green-900">사회공헌 혁신 분야</h4>
+                                </div>
+                                <ul class="list-disc pl-5 space-y-2 text-gray-700 text-sm">
+                                    <li>탄소중립, 친환경 항만을 중심 주제로 활용</li>
+                                    <li>지역사회와의 상생 방안 구체화</li>
+                                    <li>ESG 경영 트렌드와 연계한 제안 개발</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 차별화 전략 -->
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-10 border-glow">
+                    <div class="bg-gradient-to-r from-purple-600 to-purple-800 p-4 text-white">
+                        <h3 class="text-xl font-bold">4.2 차별화 전략</h3>
+                    </div>
+                    <div class="p-8">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-600 feature-card">
+                                <div class="bg-purple-100 inline-block rounded-full p-3 mb-4">
+                                    <i class="fas fa-database text-xl text-purple-600"></i>
+                                </div>
+                                <h4 class="text-lg font-bold text-purple-900 mb-3">데이터 기반 접근</h4>
+                                <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                                    <li>구체적인 데이터와 수치를 활용한 문제 정의 및 해결책 제시</li>
+                                    <li>부산항 특성에 맞는 맞춤형 솔루션 개발</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-600 feature-card">
+                                <div class="bg-purple-100 inline-block rounded-full p-3 mb-4">
+                                    <i class="fas fa-network-wired text-xl text-purple-600"></i>
+                                </div>
+                                <h4 class="text-lg font-bold text-purple-900 mb-3">통합적 접근</h4>
+                                <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                                    <li>여러 분야를 융합한 종합적 제안 개발 (예: AI+안전+친환경)</li>
+                                    <li>항만의 다양한 이해관계자를 고려한 포괄적 접근</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-600 feature-card">
+                                <div class="bg-purple-100 inline-block rounded-full p-3 mb-4">
+                                    <i class="fas fa-tasks text-xl text-purple-600"></i>
+                                </div>
+                                <h4 class="text-lg font-bold text-purple-900 mb-3">실행 가능성 강조</h4>
+                                <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                                    <li>단계적 실행 계획 및 로드맵 제시</li>
+                                    <li>투자 대비 효과 분석 포함</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 결론 및 제언 -->
+    <section id="conclusion" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl font-bold mb-12 text-blue-900">5. 결론 및 제언</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-white p-8 rounded-2xl shadow-xl border-glow">
+                        <h3 class="text-2xl font-bold text-blue-900 mb-6">5.1 주요 결론</h3>
+                        <ul class="list-disc pl-6 space-y-3 text-gray-700">
+                            <li>디지털 혁신, 특히 AI와 로봇 기술에 대한 관심이 가장 높고 지속적인 상승세</li>
+                            <li>안전재난 분야는 특정 사고 발생 시기와 연관된 관심도 변화가 뚜렷함</li>
+                            <li>사회공헌 분야는 ESG에서 탄소중립, 친환경으로 관심이 옮겨가는 추세</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-8 rounded-2xl shadow-xl border-glow">
+                        <h3 class="text-2xl font-bold text-blue-900 mb-6">5.2 제안 제언</h3>
+                        <ol class="list-decimal pl-6 space-y-3 text-gray-700">
+                            <li><strong>트렌드 부합성</strong>: 현재 상승 추세인 AI, 로봇, 탄소중립 키워드를 적극 활용</li>
+                            <li><strong>현실적 적용성</strong>: 부산항의 실제 상황과 문제점을 정확히 파악하여 반영</li>
+                            <li><strong>혁신성과 실현가능성의 균형</strong>: 혁신적 아이디어와 실현 가능성을 균형 있게 제시</li>
+                            <li><strong>사회적 가치</strong>: 경제적 효과와 함께 환경적, 사회적 가치를 강조</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-50 p-8 rounded-2xl shadow-xl">
+                    <h3 class="text-2xl font-bold text-blue-900 mb-6 text-center">부록: 데이터 출처 및 방법론</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <ul class="list-disc pl-6 space-y-2 text-gray-700">
+                                <li><strong>데이터 출처</strong>: 네이버 데이터랩 검색어 트렌드 API</li>
+                                <li><strong>조사 기간</strong>: 2023년 4월 1일 ~ 2025년 4월 1일</li>
+                                <li><strong>분석 방법</strong>: 네이버 데이터랩 API를 통한 상대적 검색량 수집 및 비교 분석</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <ul class="list-disc pl-6 space-y-2 text-gray-700">
+                                <li><strong>제한사항</strong>: 네이버 데이터랩 검색어 제한(5글자 이내) 특성 고려하여 키워드 선정</li>
+                                <li><strong>분석 도구</strong>: 네이버 데이터랩 API, 데이터 시각화 및 분석 도구</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-gradient-to-r from-blue-900 to-blue-700 text-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">PORT-AI로 항만의 미래를 혁신하세요</h2>
+                <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">트렌드 분석 결과를 바탕으로 개발된 AI 기반 항만 통합 스마트 관제 시스템은 항만 산업의 디지털 미래를 선도합니다.</p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="index.html" class="bg-white text-blue-900 px-8 py-4 rounded-lg font-semibold hover:bg-blue-100 transition flex items-center justify-center">
+                        <i class="fas fa-home mr-2"></i>
+                        <span>메인 페이지로</span>
+                    </a>
+                    <a href="details.html" class="bg-transparent border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-900 transition flex items-center justify-center">
+                        <i class="fas fa-tv mr-2"></i>
+                        <span>상세 내용</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-6 md:mb-0">
+                        <div class="flex items-center">
+                            <i class="fas fa-ship text-xl mr-2"></i>
+                            <h2 class="text-xl font-bold">PORT-AI 제안서</h2>
+                        </div>
+                        <p class="text-sm opacity-75 mt-1">2025년 항만혁신 국민제안 공모</p>
+                    </div>
+                    <div class="text-sm opacity-75 text-center md:text-right">
+                        <p>제안자: 박용환</p>
+                        <p>제출일: 2025년 5월 7일</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 차트 생성
+        document.addEventListener('DOMContentLoaded', function() {
+            // 트렌드 차트
+            const interestChartCtx = document.getElementById('interestChart').getContext('2d');
+            const interestChart = new Chart(interestChartCtx, {
+                type: 'line',
+                data: {
+                    labels: ['2023-04', '2023-07', '2023-10', '2024-01', '2024-04', '2024-07', '2024-10', '2025-01', '2025-04'],
+                    datasets: [
+                        {
+                            label: '디지털 혁신',
+                            data: [65, 68, 72, 75, 78, 83, 85, 87, 89.31],
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: '사회공헌 혁신',
+                            data: [78, 71, 65, 58, 52, 48, 45, 42, 40.89],
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: '안전재난대응 혁신',
+                            data: [20, 22, 25, 18, 24, 100, 35, 28, 23.58],
+                            borderColor: 'rgba(239, 68, 68, 1)',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: '분야별 검색 트렌드 변화 (2023-2025)'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '상대적 검색량'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: '기간'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Add scroll reveal animations for cards
+            const cards = document.querySelectorAll('.feature-card, .stat-card, .system-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            cards.forEach(card => {
+                observer.observe(card);
+            });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        window.scrollTo({
+                            top: target.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Header scroll effect
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('header');
+                if (window.scrollY > 50) {
+                    header.classList.add('py-2');
+                    header.classList.remove('py-3');
+                    header.classList.add('shadow-md');
+                } else {
+                    header.classList.remove('py-2');
+                    header.classList.add('py-3');
+                    header.classList.remove('shadow-md');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
